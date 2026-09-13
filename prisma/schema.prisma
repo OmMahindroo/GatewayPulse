@@ -1,0 +1,123 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String        @id @default(cuid())
+  email          String        @unique
+  name           String?
+  role           String        @default("MERCHANT") // MERCHANT | PG_SUPPORT | ADMIN
+  companyName    String?
+  domain         String?       // Extracted from email, e.g., "razorpay.com"
+  isVerified     Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  issues         Issue[]
+  comments       Comment[]
+  followedIssues IssueFollow[]
+}
+
+model PaymentGateway {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "Razorpay"
+  slug        String   @unique // e.g., "razorpay"
+  domain      String   // e.g., "razorpay.com"
+  website     String
+  description String?
+  createdAt   DateTime @default(now())
+  issues      Issue[]
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String     // e.g., "Settlements"
+  slug        String     @unique
+  description String?
+  templates   Template[]
+  issues      Issue[]
+}
+
+model Template {
+  id         String   @id @default(cuid())
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  title      String
+  content    String
+}
+
+model Issue {
+  id              String         @id @default(cuid())
+  title           String
+  description     String
+  status          String         @default("OPEN") // OPEN | INVESTIGATING | PROPOSED_RESOLUTION | RESOLVED | AUTO_CLOSED | DISPUTED
+  merchantId      String
+  merchant        User           @relation(fields: [merchantId], references: [id])
+  gatewayId       String
+  gateway         PaymentGateway @relation(fields: [gatewayId], references: [id])
+  categoryId      String
+  category        Category       @relation(fields: [categoryId], references: [id])
+  
+  // Follow-up / Nudge tracking (24h cooldown)
+  nudgeCount      Int            @default(0)
+  lastNudgedAt    DateTime?
+
+  // Resolution handshake fields
+  resolutionNotes String?
+  proposedAt      DateTime?
+  autoCloseAt     DateTime?      // Set to proposedAt + 48 hours
+  resolvedAt      DateTime?
+
+  upvotesCount    Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  attachments     Attachment[]
+  comments        Comment[]
+  followers       IssueFollow[]
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  issueId   String
+  issue     Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  fileUrl   String
+  fileName  String
+  fileType  String
+  fileSize  Int?
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  issueId    String
+  issue      Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id])
+  content    String
+  isOfficial Boolean  @default(false) // True if author domain matches Gateway domain
+  isPinned   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model IssueFollow {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  issueId   String
+  issue     Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, issueId])
+}
+
+model OtpToken {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
