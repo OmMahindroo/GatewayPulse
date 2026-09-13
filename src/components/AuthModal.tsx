@@ -19,6 +19,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [devCode, setDevCode] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
+  const [isSandboxRestriction, setIsSandboxRestriction] = useState(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -47,6 +48,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
       }
 
       setEmailSent(Boolean(data.emailSent));
+      setIsSandboxRestriction(Boolean(data.isSandboxRestriction));
       setInfoMessage(data.message || null);
       setDevCode(data.devCode || null);
       setStep('OTP');
@@ -218,22 +220,31 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     </p>
                   </div>
                 ) : (
-                  <div className="mt-2.5 p-2.5 rounded-md bg-neutral-100 border border-neutral-200 text-xs text-neutral-800 space-y-1.5">
+                  <div className="mt-2.5 p-2.5 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-[11px] text-neutral-600 uppercase tracking-wider">
-                        Local Dev Passcode
+                      <span className="font-semibold text-[11px] text-amber-800 uppercase tracking-wider">
+                        {isSandboxRestriction ? 'Resend Sandbox Notice' : 'Verification Passcode'}
                       </span>
-                      <span className="text-[10px] text-neutral-500">(RESEND_API_KEY not configured)</span>
+                      <span className="text-[10px] font-mono text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-300">
+                        {isSandboxRestriction ? 'Sandbox Restricted' : 'Dev Simulation'}
+                      </span>
                     </div>
+
+                    <p className="text-[11px] text-amber-800 leading-relaxed">
+                      {isSandboxRestriction
+                        ? 'Resend free testing tier only delivers live emails to your registered Resend account (mahindrooom@gmail.com). For all other addresses, use the instant passcode generated below:'
+                        : infoMessage || 'Your one-time verification passcode has been generated below:'}
+                    </p>
+
                     {devCode && (
-                      <div className="flex items-center justify-between bg-white px-2.5 py-1.5 rounded border border-neutral-300">
-                        <span className="font-mono font-bold text-neutral-900 tracking-wider text-sm">{devCode}</span>
+                      <div className="flex items-center justify-between bg-white px-3 py-2 rounded-md border border-amber-300 shadow-sm">
+                        <span className="font-mono font-bold text-neutral-900 tracking-widest text-base">{devCode}</span>
                         <button
                           type="button"
                           onClick={() => setCode(devCode)}
-                          className="text-xs font-medium text-neutral-900 underline hover:text-black"
+                          className="text-xs font-semibold text-neutral-900 underline hover:text-black"
                         >
-                          Autofill
+                          Autofill & Continue
                         </button>
                       </div>
                     )}

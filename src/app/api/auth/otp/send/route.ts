@@ -74,10 +74,18 @@ export async function POST(request: Request) {
 
         if (error) {
           console.error('[AUTH OTP] Resend API error:', error);
+          const isSandbox =
+            error.statusCode === 403 ||
+            error.name === 'validation_error' ||
+            error.message?.includes('only send testing emails to your own email address');
+
           return NextResponse.json({
             success: true,
             emailSent: false,
-            message: `Could not deliver to ${cleanEmail} via Resend (${error.message}). Using dev code fallback.`,
+            isSandboxRestriction: isSandbox,
+            message: isSandbox
+              ? `Resend Free Sandbox: Live emails can only be sent to your registered account (mahindrooom@gmail.com). To test with ${cleanEmail}, use the instant passcode below.`
+              : `Could not deliver via Resend (${error.message}). Using fallback code.`,
             devCode: code,
           });
         }
