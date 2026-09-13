@@ -2,17 +2,13 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding initial data...');
+  const existingCount = await prisma.paymentGateway.count();
+  if (existingCount > 0) {
+    console.log('Database already contains records. Skipping seed to protect live data.');
+    return;
+  }
 
-  // Clean existing
-  await prisma.attachment.deleteMany();
-  await prisma.comment.deleteMany();
-  await prisma.issueFollow.deleteMany();
-  await prisma.issue.deleteMany();
-  await prisma.template.deleteMany();
-  await prisma.category.deleteMany();
-  await prisma.paymentGateway.deleteMany();
-  await prisma.user.deleteMany();
+  console.log('Seeding initial data...');
 
   // 1. Seed Gateways
   const gateways = await Promise.all([

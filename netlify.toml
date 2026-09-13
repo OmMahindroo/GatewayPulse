@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "prisma generate && prisma db push --accept-data-loss && node prisma/seed.js && next build"
   publish = ".next"
 
 [[plugins]]
