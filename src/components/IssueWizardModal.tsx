@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Building2, Layers, FileText, Upload, AlertCircle, ShieldAlert, Check } from 'lucide-react';
+import { X, Building2, Layers, FileText, Upload, AlertCircle, ShieldAlert, Check, ChevronDown } from 'lucide-react';
 import { AuthSession } from '@/lib/auth';
 
 interface IssueWizardModalProps {
@@ -298,26 +298,40 @@ export function IssueWizardModal({
 
           {/* Step 1: Select Gateway */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-neutral-500" />
-              1. Select Affected Payment Gateway
+            <label className="block text-xs font-semibold text-neutral-800 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-neutral-500" />
+                1. Select Affected Payment Gateway
+              </span>
+              {selectedGatewayId && (
+                <span className="text-[11px] text-neutral-500 font-mono font-normal">
+                  {gateways.find((g) => g.id === selectedGatewayId)?.domain}
+                </span>
+              )}
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2">
-              {gateways.map((gw) => (
-                <button
-                  key={gw.id}
-                  type="button"
-                  onClick={() => setSelectedGatewayId(gw.id)}
-                  className={`p-2 sm:p-2.5 text-center rounded-md border text-xs font-medium transition-colors ${
-                    selectedGatewayId === gw.id
-                      ? 'border-neutral-900 bg-neutral-900 text-white'
-                      : 'border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100'
-                  }`}
-                >
-                  {gw.name}
-                </button>
-              ))}
+            <div className="relative">
+              <select
+                required
+                value={selectedGatewayId}
+                onChange={(e) => setSelectedGatewayId(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900 font-medium cursor-pointer appearance-none pr-10 shadow-sm transition-colors hover:border-neutral-400"
+              >
+                <option value="" disabled>-- Select Payment Gateway --</option>
+                {gateways.map((gw) => (
+                  <option key={gw.id} value={gw.id}>
+                    {gw.name} ({gw.domain})
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-500">
+                <ChevronDown className="w-4 h-4" />
+              </div>
             </div>
+            {gateways.find((g) => g.id === selectedGatewayId)?.description && (
+              <p className="text-[11px] text-neutral-500 mt-1.5">
+                {gateways.find((g) => g.id === selectedGatewayId)?.description}
+              </p>
+            )}
           </div>
 
           {/* Step 2: Select Issue Domain */}
