@@ -35,37 +35,40 @@ export function DashboardScorecard({
     <div className="space-y-4">
       {/* Top Level Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
-        <div className="p-3.5 sm:p-4 rounded-md border border-neutral-200 bg-white shadow-sm">
+        {/* 1. Verified Resolutions (Green) */}
+        <div className="p-3.5 sm:p-4 rounded-md border border-emerald-200 bg-emerald-50/40 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] sm:text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-              Active Incidents
+            <span className="text-[11px] sm:text-xs font-semibold text-emerald-800 uppercase tracking-wider">
+              Verified Resolutions
             </span>
-            <Activity className="w-4 h-4 text-neutral-500" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
-          <p className="text-xl sm:text-2xl font-bold font-mono text-neutral-900 mt-1.5">{totalOpen}</p>
-          <p className="text-[10px] sm:text-[11px] text-neutral-500 mt-0.5">Across {gateways.length} tracked gateways</p>
+          <p className="text-xl sm:text-2xl font-bold font-mono text-emerald-950 mt-1.5">{totalResolved}</p>
+          <p className="text-[10px] sm:text-[11px] text-emerald-700 mt-0.5">Confirmed or auto-closed</p>
         </div>
 
+        {/* 2. Active Incidents (Yellow / Amber) */}
+        <div className="p-3.5 sm:p-4 rounded-md border border-amber-200 bg-amber-50/40 shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] sm:text-xs font-semibold text-amber-800 uppercase tracking-wider">
+              Active Incidents
+            </span>
+            <Activity className="w-4 h-4 text-amber-600" />
+          </div>
+          <p className="text-xl sm:text-2xl font-bold font-mono text-amber-950 mt-1.5">{totalOpen}</p>
+          <p className="text-[10px] sm:text-[11px] text-amber-700 mt-0.5">Across {gateways.length} tracked gateways</p>
+        </div>
+
+        {/* 3. Critical Breaches (Red) */}
         <div className="p-3.5 sm:p-4 rounded-md border border-red-200 bg-red-50/40 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] sm:text-xs font-semibold text-red-700 uppercase tracking-wider">
+            <span className="text-[11px] sm:text-xs font-semibold text-red-800 uppercase tracking-wider">
               Critical Breaches
             </span>
             <AlertOctagon className="w-4 h-4 text-red-600" />
           </div>
-          <p className="text-xl sm:text-2xl font-bold font-mono text-red-900 mt-1.5">{totalBreached}</p>
+          <p className="text-xl sm:text-2xl font-bold font-mono text-red-950 mt-1.5">{totalBreached}</p>
           <p className="text-[10px] sm:text-[11px] text-red-700 mt-0.5">Unresolved tickets exceeding 7 days</p>
-        </div>
-
-        <div className="p-3.5 sm:p-4 rounded-md border border-neutral-200 bg-white shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] sm:text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-              Verified Resolutions
-            </span>
-            <CheckCircle2 className="w-4 h-4 text-neutral-600" />
-          </div>
-          <p className="text-xl sm:text-2xl font-bold font-mono text-neutral-900 mt-1.5">{totalResolved}</p>
-          <p className="text-[10px] sm:text-[11px] text-neutral-500 mt-0.5">Confirmed or auto-closed</p>
         </div>
       </div>
 
