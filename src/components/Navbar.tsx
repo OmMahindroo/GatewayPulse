@@ -1,7 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, User, LogOut, ShieldCheck, Store, Search, X } from 'lucide-react';
+import {
+  Plus,
+  User,
+  LogOut,
+  ShieldCheck,
+  Store,
+  Search,
+  X,
+  LayoutDashboard,
+} from 'lucide-react';
 import { AuthSession } from '@/lib/auth';
 
 interface NavbarProps {
@@ -11,6 +20,7 @@ interface NavbarProps {
   onOpenAuth: () => void;
   onLogout: () => void;
   onOpenReport: () => void;
+  onOpenAdmin: () => void;
 }
 
 export function Navbar({
@@ -20,34 +30,49 @@ export function Navbar({
   onOpenAuth,
   onLogout,
   onOpenReport,
+  onOpenAdmin,
 }: NavbarProps) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   return (
     <header className="border-b border-neutral-200 bg-white sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-2 sm:gap-4">
-        {/* Brand */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <div className="w-6 h-6 bg-neutral-900 rounded-md flex items-center justify-center text-white text-xs font-mono font-bold shrink-0">
-            GP
-          </div>
-          <div>
-            <span className="font-semibold text-xs sm:text-sm tracking-tight text-neutral-900 block leading-tight">
-              GatewayPulse
-            </span>
-            <span className="text-[9px] sm:text-[10px] font-mono text-neutral-500 block -mt-0.5 hidden xs:block">
-              PG Incident & SLA Registry
-            </span>
-          </div>
+        {/* Brand + Top Anchor Links */}
+        <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+          <a href="#" className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            <div className="w-6 h-6 bg-neutral-900 rounded-md flex items-center justify-center text-white text-xs font-mono font-bold shrink-0">
+              GP
+            </div>
+            <div>
+              <span className="font-semibold text-xs sm:text-sm tracking-tight text-neutral-900 block leading-tight">
+                GatewayPulse
+              </span>
+              <span className="text-[9px] sm:text-[10px] font-mono text-neutral-500 block -mt-0.5 hidden xs:block">
+                Public Board for Merchant Support
+              </span>
+            </div>
+          </a>
+
+          <nav className="hidden lg:flex items-center gap-4 text-xs font-medium text-neutral-600">
+            <a href="#scorecard" className="hover:text-neutral-900 transition-colors">
+              Provider Scorecard
+            </a>
+            <a href="#public-board" className="hover:text-neutral-900 transition-colors">
+              Reported Issues
+            </a>
+            <a href="#why-fair" className="hover:text-neutral-900 transition-colors">
+              Why This Stays Fair
+            </a>
+          </nav>
         </div>
 
         {/* Desktop / Tablet Search */}
-        <div className="flex-1 max-w-md hidden md:block">
+        <div className="flex-1 max-w-sm hidden md:block">
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-2.5" />
             <input
               type="text"
-              placeholder="Search incidents by gateway, category, or keywords..."
+              placeholder="Search issues by provider, category, or ticket ID..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               className="w-full pl-8 pr-3 py-1.5 text-xs border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900 placeholder:text-neutral-400"
@@ -56,7 +81,7 @@ export function Navbar({
         </div>
 
         {/* Right side actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Mobile search toggle */}
           <button
             type="button"
@@ -67,11 +92,22 @@ export function Navbar({
             {mobileSearchOpen ? <X className="w-3.5 h-3.5" /> : <Search className="w-3.5 h-3.5" />}
           </button>
 
+          {/* Admin Dashboard Access */}
+          <button
+            type="button"
+            onClick={onOpenAdmin}
+            className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-md border border-neutral-200 bg-neutral-50 text-xs font-medium text-neutral-700 hover:bg-neutral-100 transition-colors"
+            title="GatewayPulse Admin Dashboard"
+          >
+            <LayoutDashboard className="w-3.5 h-3.5 text-neutral-600" />
+            <span className="hidden sm:inline">Admin</span>
+          </button>
+
           {currentUser ? (
-            <div className="flex items-center gap-1 sm:gap-2">
-              <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-md border border-neutral-200 bg-neutral-50 text-xs max-w-[110px] sm:max-w-[180px]">
-                {currentUser.role === 'PG_SUPPORT' ? (
-                  <ShieldCheck className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-md border border-neutral-200 bg-neutral-50 text-xs max-w-[110px] sm:max-w-[170px]">
+                {currentUser.role === 'PG_SUPPORT' || currentUser.role === 'ADMIN' ? (
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 ) : (
                   <Store className="w-3.5 h-3.5 text-neutral-600 shrink-0" />
                 )}
@@ -80,7 +116,7 @@ export function Navbar({
                 </span>
                 {currentUser.role === 'PG_SUPPORT' && (
                   <span className="hidden sm:inline-block text-[10px] bg-sky-100 text-sky-800 px-1 py-0.2 rounded font-medium shrink-0">
-                    POC
+                    PG
                   </span>
                 )}
               </div>
@@ -111,8 +147,7 @@ export function Navbar({
             className="inline-flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-md bg-neutral-900 text-white text-xs font-medium hover:bg-neutral-800 border border-neutral-900 shadow-sm transition-colors shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Report</span>
-            <span className="hidden sm:inline">Issue</span>
+            <span>Report Issue</span>
           </button>
         </div>
       </div>
@@ -125,7 +160,7 @@ export function Navbar({
             <input
               type="text"
               autoFocus
-              placeholder="Search incidents..."
+              placeholder="Search issues..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               className="w-full pl-8 pr-3 py-1.5 text-xs border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 bg-white text-neutral-900"

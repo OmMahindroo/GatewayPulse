@@ -9,6 +9,7 @@ import {
   FileText,
   ShieldCheck,
   BellRing,
+  Clock,
 } from 'lucide-react';
 import { SlaBadge } from './SlaBadge';
 
@@ -24,21 +25,32 @@ export function IssueCard({ issue, onClick, onUpvote }: IssueCardProps) {
       onClick={onClick}
       className="p-3.5 sm:p-4 border border-neutral-200 rounded-md bg-white hover:border-neutral-400 hover:shadow-sm cursor-pointer transition-all space-y-2.5"
     >
-      {/* Top Row: Gateway, Category, SLA Badge */}
+      {/* Top Row: Gateway, Category, Official PG Response, SLA Badge */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
           <span className="inline-flex items-center gap-1 font-semibold text-neutral-900 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded-md">
             <Building2 className="w-3 h-3 text-neutral-500 shrink-0" />
-            {issue.gateway.name}
+            {issue.customPgName || issue.gateway.name}
           </span>
           <span className="inline-flex items-center gap-1 text-neutral-600 bg-neutral-50 border border-neutral-200 px-2 py-0.5 rounded-md">
             <Layers className="w-3 h-3 text-neutral-400 shrink-0" />
-            <span className="truncate max-w-[140px] sm:max-w-none">{issue.category.name}</span>
+            <span className="truncate max-w-[160px] sm:max-w-none">{issue.category.name}</span>
           </span>
+          {issue.issueDuration && (
+            <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-mono text-neutral-600 bg-neutral-100 border border-neutral-200 px-1.5 py-0.5 rounded-md">
+              <Clock className="w-3 h-3 text-neutral-400 shrink-0" />
+              {issue.issueDuration}
+            </span>
+          )}
+          {issue.channelTried && (
+            <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono text-neutral-500 bg-neutral-50 border border-neutral-200 px-1.5 py-0.5 rounded-md">
+              Channel: {issue.channelTried}
+            </span>
+          )}
           {issue.hasOfficialReply && (
             <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-medium text-sky-800 bg-sky-50 border border-sky-200 px-1.5 py-0.5 rounded-md">
               <ShieldCheck className="w-3 h-3 text-sky-600 shrink-0" />
-              Official Reply
+              Official PG Response
             </span>
           )}
         </div>
@@ -56,11 +68,11 @@ export function IssueCard({ issue, onClick, onUpvote }: IssueCardProps) {
         </p>
       </div>
 
-      {/* Bottom row: Reporter, Attachments, Nudge, Comments, Upvote */}
+      {/* Bottom row: Reporter, Attachments, Nudge, Comments, I have the same issue */}
       <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs text-neutral-500 pt-2 border-t border-neutral-100">
         <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-          <span className="truncate max-w-[120px] sm:max-w-none font-medium text-neutral-700">
-            {issue.merchant.companyName || issue.merchant.name || 'Merchant'}
+          <span className="truncate max-w-[140px] sm:max-w-none font-medium text-neutral-700">
+            {issue.merchant?.companyName || issue.merchant?.name || 'Verified Merchant'}
           </span>
           <span>•</span>
           <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
@@ -89,10 +101,10 @@ export function IssueCard({ issue, onClick, onUpvote }: IssueCardProps) {
           <button
             type="button"
             onClick={onUpvote}
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-neutral-200 bg-neutral-50 text-[11px] font-medium text-neutral-700 hover:bg-neutral-100 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-neutral-200 bg-neutral-50 text-[11px] font-medium text-neutral-700 hover:bg-neutral-100 transition-colors"
           >
             <ThumbsUp className="w-3 h-3 text-neutral-500 shrink-0" />
-            <span>{issue.upvotesCount}</span>
+            <span>I have the same issue ({issue.upvotesCount})</span>
           </button>
         </div>
       </div>

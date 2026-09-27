@@ -10,9 +10,17 @@ export async function GET() {
           select: { issues: true },
         },
       },
-      orderBy: {
-        name: 'asc',
-      },
+    });
+
+    categories.sort((a, b) => {
+      const numA = parseInt(a.name, 10);
+      const numB = parseInt(b.name, 10);
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return numA - numB;
+      }
+      if (!isNaN(numA)) return -1;
+      if (!isNaN(numB)) return 1;
+      return a.name.localeCompare(b.name);
     });
 
     return NextResponse.json({ categories });

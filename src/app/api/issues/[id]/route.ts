@@ -19,10 +19,8 @@ export async function GET(
           select: {
             id: true,
             name: true,
-            email: true,
             companyName: true,
             role: true,
-            domain: true,
           },
         },
         attachments: true,
@@ -32,7 +30,6 @@ export async function GET(
               select: {
                 id: true,
                 name: true,
-                email: true,
                 role: true,
                 companyName: true,
                 domain: true,
@@ -61,9 +58,37 @@ export async function GET(
 
     const nudgeStatus = canNudge(issue.lastNudgedAt);
 
+    // Anonymize merchant display name if it contains an email prefix
+    const publicMerchant = {
+      id: issue.merchant?.id,
+      name: 'Verified Merchant',
+      companyName:
+        issue.merchant?.companyName && !issue.merchant.companyName.includes('@')
+          ? issue.merchant.companyName
+          : `Merchant #${(issue.merchant?.id || '0000').slice(-4).toUpperCase()}`,
+      role: issue.merchant?.role || 'MERCHANT',
+    };
+
+    const sanitizedComments = (issue.comments || []).map((c: any) => ({
+      ...c,
+      author: c.isOfficial
+        ? c.author
+        : {
+            ...c.author,
+            name: 'Verified Merchant',
+            companyName:
+              c.author?.companyName && !c.author.companyName.includes('@')
+                ? c.author.companyName
+                : `Merchant #${(c.author?.id || '0000').slice(-4).toUpperCase()}`,
+          },
+    }));
+
     return NextResponse.json({
       issue: {
         ...issue,
+        contactMobile: undefined,
+        merchant: publicMerchant,
+        comments: sanitizedComments,
         sla,
         nudgeStatus,
       },

@@ -14,6 +14,7 @@ export async function GET(request: Request) {
     const status = searchParams.get('status');
     const slaTier = searchParams.get('sla') as SlaTier | null;
     const search = searchParams.get('search');
+    const isAdminView = searchParams.get('admin') === 'true';
 
     const where: any = {};
 
@@ -35,8 +36,9 @@ export async function GET(request: Request) {
 
     if (search) {
       where.OR = [
-        { title: { contains: search } },
-        { description: { contains: search } },
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { pgTicketId: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -49,7 +51,8 @@ export async function GET(request: Request) {
           select: {
             id: true,
             name: true,
-            email: true,
+            email: isAdminView,
+            mobileNumber: isAdminView,
             companyName: true,
             role: true,
           },
@@ -68,8 +71,8 @@ export async function GET(request: Request) {
       },
     });
 
-    // Compute SLA and filter by SLA tier if specified
-    const enrichedIssues = issues.map((issue) => {
+    // Compute SLA and sanitize private contact details for public feed
+    const enrichedIssues = issues.map((issue: any) => {
       const sla = calculateSla(
         issue.createdAt,
         issue.status,
@@ -77,15 +80,30 @@ export async function GET(request: Request) {
         issue.resolvedAt
       );
 
+      // Ensure email and mobile number are never exposed on the public board
+      const publicMerchant = isAdminView
+        ? issue.merchant
+        : {
+            id: issue.merchant?.id,
+            name: 'Verified Merchant',
+            companyName:
+              issue.merchant?.companyName && !issue.merchant.companyName.includes('@')
+                ? issue.merchant.companyName
+                : `Merchant #${(issue.merchant?.id || '0000').slice(-4).toUpperCase()}`,
+            role: issue.merchant?.role || 'MERCHANT',
+          };
+
       return {
         ...issue,
+        contactMobile: isAdminView ? issue.contactMobile : undefined,
+        merchant: publicMerchant,
         sla,
         hasOfficialReply: issue.comments.length > 0,
       };
     });
 
     const filteredIssues = slaTier
-      ? enrichedIssues.filter((i) => i.sla.tier === slaTier)
+      ? enrichedIssues.filter((i: any) => i.sla.tier === slaTier)
       : enrichedIssues;
 
     return NextResponse.json({ issues: filteredIssues });
@@ -97,7 +115,20 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, gatewayId, categoryId, merchantId, attachments } = body;
+    const {
+      title,
+      description,
+      gatewayId,
+      categoryId,
+      merchantId,
+      attachments,
+      pgTicketId,
+      dateRaised,
+      channelTried,
+      issueDuration,
+      contactMobile,
+      customPgName,
+    } = body;
 
     if (!title || !description || !gatewayId || !categoryId || !merchantId) {
       return NextResponse.json(
@@ -112,17 +143,21 @@ export async function POST(request: Request) {
     });
 
     if (!validMerchant) {
-      // Fallback: check session or find any merchant user or recreate from session
       validMerchant = await prisma.user.findFirst({
         where: { role: 'MERCHANT' },
       });
 
       if (!validMerchant) {
         return NextResponse.json(
-          { error: 'Your session has expired. Please sign in again to publish an issue.' },
+          { error: 'Your session has expired. Please verify your email to publish an issue.' },
           { status: 401 }
         );
       }
+    } else if (contactMobile && !validMerchant.mobileNumber) {
+      await prisma.user.update({
+        where: { id: validMerchant.id },
+        data: { mobileNumber: contactMobile.trim() },
+      });
     }
 
     // 2. Validate Gateway
@@ -133,7 +168,7 @@ export async function POST(request: Request) {
     if (!validGateway) {
       validGateway = await prisma.paymentGateway.findFirst();
       if (!validGateway) {
-        return NextResponse.json({ error: 'Selected payment gateway does not exist.' }, { status: 400 });
+        return NextResponse.json({ error: 'Selected payment provider does not exist.' }, { status: 400 });
       }
     }
 
@@ -161,7 +196,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: descMod.error }, { status: 422 });
     }
 
-    // 6. Create Issue with validated relations
+    // 6. Create Issue with validated relations & structured metadata
     const newIssue = await prisma.issue.create({
       data: {
         title: titleMod.sanitizedText,
@@ -170,21 +205,27 @@ export async function POST(request: Request) {
         categoryId: validCategory.id,
         merchantId: validMerchant.id,
         status: 'OPEN',
-        attachments: attachments && Array.isArray(attachments) && attachments.length > 0
-          ? {
-              create: attachments.map((att: any) => ({
-                fileUrl: att.fileUrl,
-                fileName: att.fileName || 'proof_attachment',
-                fileType: att.fileType || 'image/png',
-                fileSize: att.fileSize || 0,
-              })),
-            }
-          : undefined,
+        pgTicketId: pgTicketId ? String(pgTicketId).trim() : null,
+        dateRaised: dateRaised ? String(dateRaised).trim() : null,
+        channelTried: channelTried ? String(channelTried).trim() : null,
+        issueDuration: issueDuration ? String(issueDuration).trim() : null,
+        contactMobile: contactMobile ? String(contactMobile).trim() : null,
+        customPgName: customPgName ? String(customPgName).trim() : null,
+        attachments:
+          attachments && Array.isArray(attachments) && attachments.length > 0
+            ? {
+                create: attachments.map((att: any) => ({
+                  fileUrl: att.fileUrl,
+                  fileName: att.fileName || 'proof_attachment',
+                  fileType: att.fileType || 'image/png',
+                  fileSize: att.fileSize || 0,
+                })),
+              }
+            : undefined,
       },
       include: {
         gateway: true,
         category: true,
-        merchant: true,
         attachments: true,
       },
     });

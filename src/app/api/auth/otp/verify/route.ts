@@ -4,7 +4,7 @@ import { authenticateOrRegisterUser } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
-    const { email, code, name } = await request.json();
+    const { email, code, name, mobileNumber } = await request.json();
 
     if (!email || !code) {
       return NextResponse.json({ error: 'Email and verification code are required.' }, { status: 400 });
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const session = await authenticateOrRegisterUser(cleanEmail, name);
+    const session = await authenticateOrRegisterUser(cleanEmail, name, mobileNumber);
 
     const response = NextResponse.json({
       success: true,

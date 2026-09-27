@@ -11,6 +11,7 @@ model User {
   id             String        @id @default(cuid())
   email          String        @unique
   name           String?
+  mobileNumber   String?
   role           String        @default("MERCHANT") // MERCHANT | PG_SUPPORT | ADMIN
   companyName    String?
   domain         String?       // Extracted from email, e.g., "razorpay.com"
@@ -22,19 +23,21 @@ model User {
 }
 
 model PaymentGateway {
-  id          String   @id @default(cuid())
-  name        String   @unique // e.g., "Razorpay"
-  slug        String   @unique // e.g., "razorpay"
-  domain      String   // e.g., "razorpay.com"
-  website     String
-  description String?
-  createdAt   DateTime @default(now())
-  issues      Issue[]
+  id               String   @id @default(cuid())
+  name             String   @unique // e.g., "Razorpay"
+  slug             String   @unique // e.g., "razorpay"
+  domain           String   // e.g., "razorpay.com"
+  website          String
+  description      String?
+  isClaimed        Boolean  @default(false)
+  escalationMatrix String?
+  createdAt        DateTime @default(now())
+  issues           Issue[]
 }
 
 model Category {
   id          String     @id @default(cuid())
-  name        String     // e.g., "Settlements"
+  name        String     // e.g., "1. Account, KYC & Activation"
   slug        String     @unique
   description String?
   templates   Template[]
@@ -50,34 +53,43 @@ model Template {
 }
 
 model Issue {
-  id              String         @id @default(cuid())
-  title           String
-  description     String
-  status          String         @default("OPEN") // OPEN | INVESTIGATING | PROPOSED_RESOLUTION | RESOLVED | AUTO_CLOSED | DISPUTED
-  merchantId      String
-  merchant        User           @relation(fields: [merchantId], references: [id])
-  gatewayId       String
-  gateway         PaymentGateway @relation(fields: [gatewayId], references: [id])
-  categoryId      String
-  category        Category       @relation(fields: [categoryId], references: [id])
+  id                String         @id @default(cuid())
+  title             String
+  description       String
+  status            String         @default("OPEN") // OPEN | INVESTIGATING | PROPOSED_RESOLUTION | RESOLVED | AUTO_CLOSED | DISPUTED
+  merchantId        String
+  merchant          User           @relation(fields: [merchantId], references: [id])
+  gatewayId         String
+  gateway           PaymentGateway @relation(fields: [gatewayId], references: [id])
+  categoryId        String
+  category          Category       @relation(fields: [categoryId], references: [id])
+
+  // Structured incident reporting fields
+  pgTicketId        String?        // PG own ticket ID (Optional)
+  dateRaised        String?        // Date when the issue was raised with PG
+  channelTried      String?        // Email | Phone - IVR | In-app Chat | LinkedIn-Social | More than One | Not Yet
+  issueDuration     String?        // <24 hours | 1-3 days | 4-7 days | 8-15 days | 15+ days
+  contactMobile     String?        // Captured Mobile No (Never shown publicly)
+  customPgName      String?        // When "Report a PG (Other / Not Listed)" is chosen
+  followup48hStatus String?        // YES_RESOLVED | STILL_UNRESOLVED | NO_UPDATE
   
   // Follow-up / Nudge tracking (24h cooldown)
-  nudgeCount      Int            @default(0)
-  lastNudgedAt    DateTime?
+  nudgeCount        Int            @default(0)
+  lastNudgedAt      DateTime?
 
   // Resolution handshake fields
-  resolutionNotes String?
-  proposedAt      DateTime?
-  autoCloseAt     DateTime?      // Set to proposedAt + 48 hours
-  resolvedAt      DateTime?
+  resolutionNotes   String?
+  proposedAt        DateTime?
+  autoCloseAt       DateTime?      // Set to proposedAt + 48 hours
+  resolvedAt        DateTime?
 
-  upvotesCount    Int            @default(0)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  upvotesCount      Int            @default(0)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
-  attachments     Attachment[]
-  comments        Comment[]
-  followers       IssueFollow[]
+  attachments       Attachment[]
+  comments          Comment[]
+  followers         IssueFollow[]
 }
 
 model Attachment {

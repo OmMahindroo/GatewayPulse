@@ -241,6 +241,29 @@ export function IssueDetailModal({
     }
   };
 
+  const handleFollowup48h = async (followupStatus: 'YES_RESOLVED' | 'STILL_UNRESOLVED' | 'NO_UPDATE') => {
+    setResolving(true);
+    try {
+      const res = await fetch(`/api/issues/${issue.id}/resolve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'followup_48h',
+          userId: currentUser?.userId,
+          followupStatus,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update status');
+      fetchIssue();
+      onRefreshList();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setResolving(false);
+    }
+  };
+
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) {
@@ -315,7 +338,7 @@ export function IssueDetailModal({
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 text-xs text-neutral-600">
                 <span className="inline-flex items-center gap-1 font-medium text-neutral-900 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded-md">
                   <Building2 className="w-3 h-3 text-neutral-500" />
-                  {issue.gateway.name}
+                  {issue.customPgName || issue.gateway.name}
                 </span>
                 <span className="inline-flex items-center gap-1 text-neutral-700 bg-neutral-50 border border-neutral-200 px-2 py-0.5 rounded-md">
                   <Layers className="w-3 h-3 text-neutral-400" />
@@ -323,7 +346,7 @@ export function IssueDetailModal({
                 </span>
                 <span className="text-neutral-400">•</span>
                 <span className="truncate max-w-[130px] sm:max-w-none">
-                  By {issue.merchant.companyName || issue.merchant.name || 'Merchant'}
+                  By {issue.merchant?.companyName || issue.merchant?.name || 'Verified Merchant'}
                 </span>
                 <span className="text-neutral-400">•</span>
                 <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
@@ -332,10 +355,86 @@ export function IssueDetailModal({
               <h1 className="text-base sm:text-lg font-semibold text-neutral-900 leading-snug">{issue.title}</h1>
             </div>
 
+            {/* Structured Escalation Context Metadata Bar */}
+            {(issue.pgTicketId || issue.dateRaised || issue.channelTried || issue.issueDuration) && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-md bg-neutral-50 border border-neutral-200 text-xs font-mono">
+                <div>
+                  <span className="text-[10px] text-neutral-500 block uppercase">PG Ticket ID</span>
+                  <span className="font-semibold text-neutral-900">{issue.pgTicketId || 'Not provided'}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-neutral-500 block uppercase">Date Raised</span>
+                  <span className="font-semibold text-neutral-900">{issue.dateRaised || 'Not specified'}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-neutral-500 block uppercase">Channel Tried</span>
+                  <span className="font-semibold text-neutral-900">{issue.channelTried || 'Standard'}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-neutral-500 block uppercase">Issue Duration</span>
+                  <span className="font-semibold text-neutral-900">{issue.issueDuration || 'Ongoing'}</span>
+                </div>
+              </div>
+            )}
+
             {/* Problem Description */}
             <div className="p-4 bg-neutral-50 rounded-md border border-neutral-200 text-xs text-neutral-800 leading-relaxed whitespace-pre-line font-mono">
               {issue.description}
             </div>
+
+            {/* 48-Hour Resolution Follow-Up Check-in */}
+            {(isMerchantAuthor || currentUser?.role === 'ADMIN') && (
+              <div className="p-3.5 rounded-md bg-white border border-neutral-300 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div>
+                  <p className="font-semibold text-neutral-900">
+                    48-Hour Resolution Follow-Up: Has your payment issue been resolved?
+                  </p>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">
+                    {issue.followup48hStatus
+                      ? `Current status recorded: ${issue.followup48hStatus.replace('_', ' ')}`
+                      : 'Keep the public board accurate by confirming your current experience.'}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    disabled={resolving}
+                    onClick={() => handleFollowup48h('YES_RESOLVED')}
+                    className={`px-2.5 py-1.5 rounded-md border text-xs font-medium transition-colors ${
+                      issue.followup48hStatus === 'YES_RESOLVED'
+                        ? 'bg-emerald-800 text-white border-emerald-800'
+                        : 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
+                    }`}
+                  >
+                    Yes, resolved
+                  </button>
+                  <button
+                    type="button"
+                    disabled={resolving}
+                    onClick={() => handleFollowup48h('STILL_UNRESOLVED')}
+                    className={`px-2.5 py-1.5 rounded-md border text-xs font-medium transition-colors ${
+                      issue.followup48hStatus === 'STILL_UNRESOLVED'
+                        ? 'bg-amber-800 text-white border-amber-800'
+                        : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                    }`}
+                  >
+                    Still unresolved
+                  </button>
+                  <button
+                    type="button"
+                    disabled={resolving}
+                    onClick={() => handleFollowup48h('NO_UPDATE')}
+                    className={`px-2.5 py-1.5 rounded-md border text-xs font-medium transition-colors ${
+                      issue.followup48hStatus === 'NO_UPDATE'
+                        ? 'bg-neutral-900 text-white border-neutral-900'
+                        : 'bg-neutral-100 text-neutral-800 border-neutral-300 hover:bg-neutral-200'
+                    }`}
+                  >
+                    No update
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Attachments / Proof */}
             {issue.attachments && issue.attachments.length > 0 && (
@@ -463,7 +562,7 @@ export function IssueDetailModal({
                   className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50 font-medium transition-colors"
                 >
                   <ThumbsUp className="w-3.5 h-3.5 text-neutral-600" />
-                  <span>Me Too ({issue.upvotesCount})</span>
+                  <span>I have the same issue ({issue.upvotesCount})</span>
                 </button>
 
                 <button
@@ -506,7 +605,7 @@ export function IssueDetailModal({
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0" />
                     <h3 className="text-xs font-semibold text-amber-900 uppercase tracking-wider">
-                      Gateway Proposed Resolution (Awaiting Confirmation)
+                      Official PG Response: Proposed Resolution (Awaiting Confirmation)
                     </h3>
                   </div>
                   <span className="text-[11px] font-mono text-amber-800">
@@ -526,14 +625,14 @@ export function IssueDetailModal({
                       disabled={resolving}
                       className="px-3 py-1.5 text-xs font-medium rounded-md bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
                     >
-                      {resolving ? 'Confirming...' : 'Confirm Resolution (Close Ticket)'}
+                      {resolving ? 'Confirming...' : 'Yes, resolved (Close Ticket)'}
                     </button>
                     <button
                       type="button"
                       onClick={() => setShowDisputeForm(!showDisputeForm)}
                       className="px-3 py-1.5 text-xs font-medium rounded-md border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50 transition-colors"
                     >
-                      Dispute (Still Broken)
+                      Still unresolved (Dispute)
                     </button>
                   </div>
                 ) : (
@@ -571,7 +670,7 @@ export function IssueDetailModal({
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-sky-700" />
                     <span className="text-xs font-semibold text-sky-900">
-                      Official Representative Action ({issue.gateway.name})
+                      Official PG Response Action ({issue.gateway.name})
                     </span>
                   </div>
                   <button
@@ -605,7 +704,7 @@ export function IssueDetailModal({
                         disabled={resolving}
                         className="px-3.5 py-1.5 text-xs font-medium rounded-md bg-sky-800 text-white hover:bg-sky-900"
                       >
-                        {resolving ? 'Submitting...' : 'Submit Resolution'}
+                        {resolving ? 'Submitting...' : 'Submit Official PG Response'}
                       </button>
                     </div>
                   </form>
@@ -643,7 +742,7 @@ export function IssueDetailModal({
                         : 'text-neutral-600 hover:text-neutral-900'
                     }`}
                   >
-                    Official PG ({officialCommentCount})
+                    Official PG Response ({officialCommentCount})
                   </button>
                 </div>
               </div>

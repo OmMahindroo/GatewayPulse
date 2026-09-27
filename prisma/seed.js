@@ -1,358 +1,325 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+const PROVIDERS = [
+  { name: 'Razorpay', slug: 'razorpay', domain: 'razorpay.com', website: 'https://razorpay.com', description: 'Payment gateway and banking platform for businesses.', isClaimed: true },
+  { name: 'PayU', slug: 'payu', domain: 'payu.in', website: 'https://payu.in', description: 'Payment gateway provider for online businesses.', isClaimed: false },
+  { name: 'Cashfree', slug: 'cashfree', domain: 'cashfree.com', website: 'https://cashfree.com', description: 'Payments and API banking solutions for merchants.', isClaimed: true },
+  { name: 'CCAvenue', slug: 'ccavenue', domain: 'ccavenue.com', website: 'https://ccavenue.com', description: 'Enterprise payment gateway and e-commerce processing.', isClaimed: false },
+  { name: 'Paytm Payment Gateway', slug: 'paytm', domain: 'paytm.com', website: 'https://business.paytm.com', description: 'Digital payments and merchant acquiring network.', isClaimed: false },
+  { name: 'BillDesk', slug: 'billdesk', domain: 'billdesk.com', website: 'https://billdesk.com', description: 'Online payment aggregation and recurring billing.', isClaimed: false },
+  { name: 'Pine Labs', slug: 'pinelabs', domain: 'pinelabs.com', website: 'https://pinelabs.com', description: 'Merchant commerce and plural online payment gateway.', isClaimed: false },
+  { name: 'Easebuzz', slug: 'easebuzz', domain: 'easebuzz.in', website: 'https://easebuzz.in', description: 'Full-stack payment solutions and API collection.', isClaimed: false },
+  { name: 'SabPaisa', slug: 'sabpaisa', domain: 'sabpaisa.in', website: 'https://sabpaisa.in', description: 'Unified online and offline payment collection gateway.', isClaimed: false },
+  { name: 'Airpay', slug: 'airpay', domain: 'airpay.co.in', website: 'https://airpay.co.in', description: 'Omnichannel financial services and payment gateway.', isClaimed: false },
+  { name: 'Juspay', slug: 'juspay', domain: 'juspay.in', website: 'https://juspay.in', description: 'Payment orchestration and checkout infrastructure.', isClaimed: false },
+  { name: 'PhonePe Payment Gateway', slug: 'phonepe', domain: 'phonepe.com', website: 'https://phonepe.com/business-solutions', description: 'UPI and digital payment gateway for merchants across India.', isClaimed: false },
+  { name: 'Instamojo', slug: 'instamojo', domain: 'instamojo.com', website: 'https://instamojo.com', description: 'Payment links and digital commerce gateway for MSMEs.', isClaimed: false },
+  { name: 'Lyra', slug: 'lyra', domain: 'lyra.com', website: 'https://lyra.com/in', description: 'Secure payment routing and e-commerce gateway.', isClaimed: false },
+  { name: 'NTT DATA', slug: 'nttdata', domain: 'nttdatapay.com', website: 'https://nttdatapay.com', description: 'Atom payment gateway and enterprise merchant services.', isClaimed: false },
+  { name: 'PayKun', slug: 'paykun', domain: 'paykun.com', website: 'https://paykun.com', description: 'Online checkout and digital payment collection.', isClaimed: false },
+  { name: 'Stripe', slug: 'stripe', domain: 'stripe.com', website: 'https://stripe.com', description: 'Global payment processing and financial infrastructure.', isClaimed: false },
+  { name: 'Zoho Payments', slug: 'zohopayments', domain: 'zoho.com', website: 'https://zoho.com/in/payments', description: 'Integrated business payment acceptance platform.', isClaimed: false },
+  { name: 'CAMS Pay', slug: 'camspay', domain: 'camspay.com', website: 'https://camspay.com', description: 'BFSI and enterprise payment authentication and collection.', isClaimed: false },
+  { name: 'Unlimit', slug: 'unlimit', domain: 'unlimit.com', website: 'https://unlimit.com', description: 'Cross-border and domestic payment gateway processing.', isClaimed: false },
+  { name: 'NSDL', slug: 'nsdl', domain: 'nsdl.co.in', website: 'https://nsdlbank.com', description: 'Payment bank and digital merchant acquiring services.', isClaimed: false },
+  { name: 'Airtel Payments', slug: 'airtelpayments', domain: 'airtel.in', website: 'https://airtel.in/bank', description: 'Digital banking and merchant payment gateway.', isClaimed: false },
+  { name: 'JIO', slug: 'jiopay', domain: 'jio.com', website: 'https://jiopay.com', description: 'JioPay Business payment gateway and acquiring.', isClaimed: false },
+  { name: 'EnKash', slug: 'enkash', domain: 'enkash.com', website: 'https://enkash.com', description: 'B2B spend management and payment gateway.', isClaimed: false },
+  { name: 'Xflow', slug: 'xflow', domain: 'xflowpay.com', website: 'https://xflowpay.com', description: 'Cross-border B2B international payment settlements.', isClaimed: false },
+  { name: 'Skydo', slug: 'skydo', domain: 'skydo.com', website: 'https://skydo.com', description: 'International export invoice collections and FIRA.', isClaimed: false },
+  { name: 'Zaakpay', slug: 'zaakpay', domain: 'zaakpay.com', website: 'https://zaakpay.com', description: 'MobiKwik enterprise payment gateway for businesses.', isClaimed: false },
+  { name: 'Payswiff', slug: 'payswiff', domain: 'payswiff.com', website: 'https://payswiff.com', description: 'Omnichannel POS and online merchant payment solutions.', isClaimed: false },
+  { name: 'Ippopay', slug: 'ippopay', domain: 'ippopay.com', website: 'https://ippopay.com', description: 'SME payment collection and banking infrastructure.', isClaimed: false },
+  { name: 'PayG', slug: 'payg', domain: 'payg.in', website: 'https://payg.in', description: 'Unified merchant payment gateway and billing.', isClaimed: false },
+  { name: 'Pay10', slug: 'pay10', domain: 'pay10.com', website: 'https://pay10.com', description: 'Real-time digital payment gateway and merchant services.', isClaimed: false },
+  { name: 'ISG', slug: 'isg', domain: 'isgpay.com', website: 'https://isgpay.com', description: 'In-Solutions Global payment acquiring and switching.', isClaimed: false },
+  { name: 'Report a PG (Other / Not Listed)', slug: 'other-pg', domain: 'other-provider.com', website: 'https://gatewaypulse.netlify.app', description: 'Select this option if your payment provider is not listed above.', isClaimed: false },
+];
+
+const CATEGORIES = [
+  {
+    name: '1. Account, KYC & Activation',
+    slug: 'account-kyc',
+    description: 'Account setup, KYC or activation issue',
+    templates: [
+      {
+        title: 'KYC verification pending beyond stated SLA with all documents uploaded',
+        content: 'All required business registration, GSTIN, and bank verification documents were submitted. Account activation remains in pending review state with no update from onboarding support.',
+      },
+      {
+        title: 'Live API keys not enabled despite completed onboarding verification',
+        content: 'Dashboard displays KYC verified status, but live mode payment acceptance and production API keys remain restricted without explanation.',
+      },
+    ],
+  },
+  {
+    name: '2. Transaction Failures & Payment Drops',
+    slug: 'transactions',
+    description: 'Transactions failing, downtime or API disruption',
+    templates: [
+      {
+        title: 'Sudden spike in UPI intent and collect transaction drops',
+        content: 'Customer UPI payment success rate dropped significantly since morning. Customers report payment debited from bank account while gateway marks order as failed or timed out.',
+      },
+      {
+        title: 'Card 3DS OTP page failing to load across major issuing banks',
+        content: 'Domestic credit and debit card transactions are failing at the ACS 3D Secure authentication step with a gateway timeout error.',
+      },
+    ],
+  },
+  {
+    name: '3. API, Integration & Technical Issues',
+    slug: 'webhooks',
+    description: 'API, SDK, plugin or integration-related issue',
+    templates: [
+      {
+        title: 'Payment captured but payment.captured webhook not delivered',
+        content: 'Transactions are marked as Captured in the payment provider dashboard, but our server endpoint is not receiving the webhook payload, leaving customer orders unfulfilled.',
+      },
+      {
+        title: 'Checkout SDK throwing unhandled CORS / initialization error in production',
+        content: 'Standard checkout script integration is failing to initialize payment modal on mobile browsers despite valid order token generation.',
+      },
+    ],
+  },
+  {
+    name: '4. Settlement Delays & Payouts',
+    slug: 'settlements',
+    description: 'Settlement, payout or funds-crediting issue',
+    templates: [
+      {
+        title: 'T+2 settlement batch delayed past 48 hours without UTR reference',
+        content: 'Scheduled settlement batch has been stuck in Processing state for over 48 hours past the agreed T+2 settlement cycle. No bank UTR number or rejection reason has been provided.',
+      },
+      {
+        title: 'Payout API requests stuck in queued state despite sufficient balance',
+        content: 'IMPS and NEFT vendor payouts initiated via dashboard/API remain stuck in Queued state for over 24 hours without status transition.',
+      },
+    ],
+  },
+  {
+    name: '5. Refunds & Chargebacks',
+    slug: 'chargebacks',
+    description: 'Refund pending, failed or chargeback-related issue',
+    templates: [
+      {
+        title: 'Initiated customer refunds stuck in processing beyond 7 business days',
+        content: 'Multiple customer refunds initiated via dashboard are still showing as Processing after 7+ working days, and bank ARN references have not been generated.',
+      },
+      {
+        title: 'Premature chargeback debit before evidence submission deadline',
+        content: 'Dispute amount was debited from our settlement ledger before the stated representment window expired, despite proof of delivery being uploaded.',
+      },
+    ],
+  },
+  {
+    name: '6. Risk Holds & Verifications',
+    slug: 'risk-holds',
+    description: 'Account/transaction hold, risk review or verification issue',
+    templates: [
+      {
+        title: 'Settlements paused by risk team without specific transaction list',
+        content: 'Entire settlement balance was placed on hold citing routine risk review. Requested invoices and delivery proofs were submitted, but settlements remain frozen with no response.',
+      },
+      {
+        title: 'Legitimate B2B high-value transaction flagged and held without timeline',
+        content: 'A verified customer payment was flagged for manual risk verification. Customer KYC and tax invoice were shared immediately, but funds remain held.',
+      },
+    ],
+  },
+  {
+    name: '7. Pricing, MDR & Billing',
+    slug: 'pricing-mdr',
+    description: 'MDR, fees, pricing, deductions or commercial dispute',
+    templates: [
+      {
+        title: 'Higher MDR deducted on settlements than agreed onboarding commercial rate',
+        content: 'Settlement reconciliation shows platform fees deducted at a higher percentage than the approved rate card in our merchant agreement.',
+      },
+      {
+        title: 'Unexplained platform fee deduction on settled batch without tax invoice',
+        content: 'A lump-sum deduction was applied to our recent settlement payout without breakdown or corresponding fee invoice in the billing portal.',
+      },
+    ],
+  },
+  {
+    name: '9. Support & Escalation',
+    slug: 'support-escalation',
+    description: 'Support not responding, repeated follow-ups or unresolved ticket',
+    templates: [
+      {
+        title: 'Support ticket auto-closed as resolved without addressing reported issue',
+        content: 'Our raised support ticket was marked as closed/resolved with a generic automated response while the underlying settlement/technical issue remains completely unresolved.',
+      },
+      {
+        title: 'No response on escalated priority ticket for over 7 days',
+        content: 'Multiple follow-ups sent on our open support ticket with all requested logs and screenshots attached, but the ticket has received zero human replies.',
+      },
+    ],
+  },
+  {
+    name: '10. Others',
+    slug: 'others',
+    description: "Issue doesn't fit the above categories",
+    templates: [
+      {
+        title: 'Dashboard reporting discrepancy and reconciliation statement mismatch',
+        content: 'Monthly settlement report exported from the merchant dashboard does not match actual bank credits and transaction-level ledger entries.',
+      },
+    ],
+  },
+];
+
 async function main() {
-  const existingCount = await prisma.paymentGateway.count();
-  if (existingCount > 0) {
-    console.log('Database already contains records. Skipping seed to protect live data.');
-    return;
+  console.log('Syncing 33 Payment Providers and 9 Problem Categories...');
+
+  // 1. Upsert all 33 Payment Providers
+  for (const prov of PROVIDERS) {
+    await prisma.paymentGateway.upsert({
+      where: { slug: prov.slug },
+      update: {
+        name: prov.name,
+        domain: prov.domain,
+        website: prov.website,
+        description: prov.description,
+      },
+      create: {
+        name: prov.name,
+        slug: prov.slug,
+        domain: prov.domain,
+        website: prov.website,
+        description: prov.description,
+        isClaimed: prov.isClaimed || false,
+        escalationMatrix:
+          'Level 1: Merchant Support Desk (SLA: 24 hrs)\nLevel 2: Grievance Nodal Officer (SLA: 3 business days)\nLevel 3: Principal Nodal Officer & Regulatory Compliance',
+      },
+    });
   }
 
-  console.log('Seeding initial data...');
+  // 2. Upsert all 9 Categories & Templates
+  for (const cat of CATEGORIES) {
+    const upsertedCat = await prisma.category.upsert({
+      where: { slug: cat.slug },
+      update: {
+        name: cat.name,
+        description: cat.description,
+      },
+      create: {
+        name: cat.name,
+        slug: cat.slug,
+        description: cat.description,
+      },
+    });
 
-  // 1. Seed Gateways
-  const gateways = await Promise.all([
-    prisma.paymentGateway.create({
-      data: {
-        name: 'Razorpay',
-        slug: 'razorpay',
+    const existingTmplCount = await prisma.template.count({
+      where: { categoryId: upsertedCat.id },
+    });
+
+    if (existingTmplCount === 0 && cat.templates && cat.templates.length > 0) {
+      for (const tmpl of cat.templates) {
+        await prisma.template.create({
+          data: {
+            categoryId: upsertedCat.id,
+            title: tmpl.title,
+            content: tmpl.content,
+          },
+        });
+      }
+    }
+  }
+
+  // 3. Seed initial demo issues ONLY if there are zero issues in the database
+  const issueCount = await prisma.issue.count();
+  if (issueCount === 0) {
+    console.log('Seeding initial baseline merchant reports...');
+
+    const merchant1 = await prisma.user.upsert({
+      where: { email: 'ops@zenvia-commerce.in' },
+      update: {},
+      create: {
+        email: 'ops@zenvia-commerce.in',
+        name: 'Verified Merchant #104',
+        companyName: 'Verified E-Commerce Merchant',
+        domain: 'zenvia-commerce.in',
+        role: 'MERCHANT',
+        isVerified: true,
+      },
+    });
+
+    const rzpRep = await prisma.user.upsert({
+      where: { email: 'escalations@razorpay.com' },
+      update: {},
+      create: {
+        email: 'escalations@razorpay.com',
+        name: 'Razorpay Escalation Desk',
+        companyName: 'Razorpay',
         domain: 'razorpay.com',
-        website: 'https://razorpay.com',
-        description: 'Payment gateway and banking platform for Indian businesses.'
-      }
-    }),
-    prisma.paymentGateway.create({
-      data: {
-        name: 'Cashfree',
-        slug: 'cashfree',
-        domain: 'cashfree.com',
-        website: 'https://cashfree.com',
-        description: 'Payments and API banking solutions for high-volume merchants.'
-      }
-    }),
-    prisma.paymentGateway.create({
-      data: {
-        name: 'Stripe',
-        slug: 'stripe',
-        domain: 'stripe.com',
-        website: 'https://stripe.com',
-        description: 'Global payment processing and financial infrastructure.'
-      }
-    }),
-    prisma.paymentGateway.create({
-      data: {
-        name: 'PayU',
-        slug: 'payu',
-        domain: 'payu.in',
-        website: 'https://payu.in',
-        description: 'Payment gateway provider for online businesses in emerging markets.'
-      }
-    }),
-    prisma.paymentGateway.create({
-      data: {
-        name: 'PhonePe PG',
-        slug: 'phonepe',
-        domain: 'phonepe.com',
-        website: 'https://phonepe.com/business-solutions',
-        description: 'UPI and digital payment gateway for merchants across India.'
-      }
-    })
-  ]);
-
-  const [razorpay, cashfree, stripe, payu, phonepe] = gateways;
-
-  // 2. Seed Categories
-  const catSettlement = await prisma.category.create({
-    data: {
-      name: 'Settlement Delays',
-      slug: 'settlements',
-      description: 'Issues regarding delayed bank credits, pending payouts, or unverified UTRs.'
-    }
-  });
-
-  const catWebhook = await prisma.category.create({
-    data: {
-      name: 'Webhook & Event Failures',
-      slug: 'webhooks',
-      description: 'Delays or errors in payment webhook callbacks, status desyncs, or signature failures.'
-    }
-  });
-
-  const catOutage = await prisma.category.create({
-    data: {
-      name: 'Transaction Drop / API Outage',
-      slug: 'api-outage',
-      description: 'Sudden drops in success rate, checkout SDK crashes, or UPI rail timeouts.'
-    }
-  });
-
-  const catDisputes = await prisma.category.create({
-    data: {
-      name: 'Disputes & Chargebacks',
-      slug: 'chargebacks',
-      description: 'Premature dispute deductions, evidence portal bugs, or unfair chargeback fees.'
-    }
-  });
-
-  const catRisk = await prisma.category.create({
-    data: {
-      name: 'Risk Holds & Verification',
-      slug: 'risk-holds',
-      description: 'Unexpected settlement holds, document re-verification delays, or volume cap issues.'
-    }
-  });
-
-  // 3. Seed Templates
-  // 3. Seed Templates for All Categories
-  await prisma.template.createMany({
-    data: [
-      // Disputes & Chargebacks
-      {
-        categoryId: catDisputes.id,
-        title: 'Premature dispute deduction before evidence submission deadline',
-        content: 'A customer chargeback was initiated on transaction ARN, but the gateway auto-debited the dispute amount and dispute fee before the stated 7-day representment window expired. Supporting delivery documents were ready for submission.'
+        role: 'PG_SUPPORT',
+        isVerified: true,
       },
-      {
-        categoryId: catDisputes.id,
-        title: 'Chargeback evidence document upload portal returning error / upload failure',
-        content: 'Attempting to submit proof of delivery and customer tax invoice through the merchant dispute dashboard fails with a network timeout. We are at risk of losing the dispute representment window due to portal downtime.'
-      },
-      {
-        categoryId: catDisputes.id,
-        title: 'Duplicate chargeback fee debited on single transaction ARN',
-        content: 'Our merchant ledger statement shows two separate dispute processing charges debited for the exact same transaction reference. Customer card issuing bank confirmed only a single dispute was raised.'
-      },
+    });
 
-      // Settlements
-      {
-        categoryId: catSettlement.id,
-        title: 'T+2 settlement delayed past 48 hours without dashboard update',
-        content: 'Settlement for batch processing from 2 days ago is still listed as "Processing" on the merchant dashboard. No UTR generated, and standard customer support ticket has not received an update.'
-      },
-      {
-        categoryId: catSettlement.id,
-        title: 'Settlement marked as Processed but bank account has not received funds',
-        content: 'The dashboard indicates batch funds were sent, but the beneficiary bank reports no inward IMPS/NEFT transfer with the specified UTR. Please confirm bank clearing status.'
-      },
-      {
-        categoryId: catSettlement.id,
-        title: 'Nodal account reconciliation delay during weekend settlement',
-        content: 'Weekend settlements for Friday to Sunday transactions have not been initiated on Monday morning. Support desk indicates a nodal bank clearing backlog with no turnaround ETA.'
-      },
+    const rzp = await prisma.paymentGateway.findUnique({ where: { slug: 'razorpay' } });
+    const cf = await prisma.paymentGateway.findUnique({ where: { slug: 'cashfree' } });
+    const payu = await prisma.paymentGateway.findUnique({ where: { slug: 'payu' } });
+    const catSettlement = await prisma.category.findUnique({ where: { slug: 'settlements' } });
+    const catWebhook = await prisma.category.findUnique({ where: { slug: 'webhooks' } });
 
-      // Webhook & Event Failures
-      {
-        categoryId: catWebhook.id,
-        title: 'Payment captured but payment.captured webhook dropped / 500 error',
-        content: 'Customer payment was successfully debited, but our server endpoint did not receive the webhook callback. Orders remain unfulfilled until manual reconciliation.'
-      },
-      {
-        categoryId: catWebhook.id,
-        title: 'Signature verification failure on webhook payload',
-        content: 'Webhook requests received from gateway IP range are failing cryptographic signature verification against the shared webhook secret.'
-      },
-      {
-        categoryId: catWebhook.id,
-        title: 'Webhook delivery delayed by 30+ minutes causing fulfillment bottlenecks',
-        content: 'While transactions show as captured in the gateway dashboard immediately, the webhook payload reaches our server 30 to 60 minutes later, causing delayed order dispatch and customer complaints.'
-      },
+    if (rzp && cf && payu && catSettlement && catWebhook) {
+      const now = new Date();
+      const d1 = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000);
+      const d9 = new Date(now.getTime() - 9 * 24 * 60 * 60 * 1000);
 
-      // Transaction Drop / API Outage
-      {
-        categoryId: catOutage.id,
-        title: 'Checkout modal latency / Gateway timeout on mobile web',
-        content: 'Users attempting checkout via mobile browsers experience 15+ second hangs before payment rail initialization. Success rate dropped by over 25% in the last 4 hours.'
-      },
-      {
-        categoryId: catOutage.id,
-        title: 'UPI intent flow timing out for PhonePe / GooglePay / Paytm',
-        content: 'Intent invoke triggers a white screen on Android devices, resulting in failed transaction status after 300 seconds.'
-      },
-      {
-        categoryId: catOutage.id,
-        title: 'Card processing API returning 502 Bad Gateway intermittently',
-        content: 'Direct server-to-server card authorization endpoints are failing with 502 Bad Gateway responses on approximately 15% of checkout requests.'
-      },
+      await prisma.issue.create({
+        data: {
+          title: 'T+2 settlement batch delayed past 48 hours without UTR reference',
+          description: 'Scheduled settlement batch of INR 4,82,000 has been stuck in Processing state for over 48 hours past the agreed T+2 cycle. Support ticket raised via dashboard has received no UTR update.',
+          status: 'OPEN',
+          merchantId: merchant1.id,
+          gatewayId: cf.id,
+          categoryId: catSettlement.id,
+          pgTicketId: 'CF-9928410',
+          dateRaised: d1.toISOString().split('T')[0],
+          channelTried: 'In-app Chat',
+          issueDuration: '1-3 days',
+          upvotesCount: 6,
+          createdAt: d1,
+        },
+      });
 
-      // Risk Holds & Verification
-      {
-        categoryId: catRisk.id,
-        title: 'Unannounced settlement pause due to routine KYC verification',
-        content: 'All merchant payouts were placed on hold without advance notice requesting documents that were already approved at onboarding.'
-      },
-      {
-        categoryId: catRisk.id,
-        title: 'Monthly processing volume limit triggered without warning or upgrade path',
-        content: 'Account payments were throttled after hitting an uncommunicated monthly threshold. Business registration documents for volume increase submitted 3 days ago without review.'
-      }
-    ]
-  });
+      const resolvedIssue = await prisma.issue.create({
+        data: {
+          title: 'Payment captured but payment.captured webhook not delivered',
+          description: 'Multiple UPI orders were captured on gateway dashboard, but webhook notifications timed out with 502 Bad Gateway. Manually reconciled after gateway engineering deployed queue fix.',
+          status: 'RESOLVED',
+          merchantId: merchant1.id,
+          gatewayId: rzp.id,
+          categoryId: catWebhook.id,
+          pgTicketId: 'RZP-7731204',
+          dateRaised: d9.toISOString().split('T')[0],
+          channelTried: 'Email',
+          issueDuration: '1-3 days',
+          followup48hStatus: 'YES_RESOLVED',
+          upvotesCount: 11,
+          createdAt: d9,
+          resolvedAt: new Date(d9.getTime() + 22 * 60 * 60 * 1000),
+        },
+      });
 
-  // 4. Seed Users
-  const merchant1 = await prisma.user.create({
-    data: {
-      email: 'merchant@acmestore.in',
-      name: 'Rahul Sharma',
-      role: 'MERCHANT',
-      companyName: 'Acme Retail India',
-      isVerified: true
+      await prisma.comment.create({
+        data: {
+          issueId: resolvedIssue.id,
+          authorId: rzpRep.id,
+          content: 'Our webhook delivery cluster experienced a backlog on node pool AP-South-1b. All pending payment.captured events have been re-triggered and delivered. Merchant confirmed resolution.',
+          isOfficial: true,
+          isPinned: true,
+        },
+      });
     }
-  });
+  }
 
-  const merchant2 = await prisma.user.create({
-    data: {
-      email: 'tech@quickbazaar.io',
-      name: 'Priya Iyer',
-      role: 'MERCHANT',
-      companyName: 'QuickBazaar App',
-      isVerified: true
-    }
-  });
-
-  const razorpayPOC = await prisma.user.create({
-    data: {
-      email: 'support.ops@razorpay.com',
-      name: 'Razorpay Support Team',
-      role: 'PG_SUPPORT',
-      domain: 'razorpay.com',
-      companyName: 'Razorpay',
-      isVerified: true
-    }
-  });
-
-  const cashfreePOC = await prisma.user.create({
-    data: {
-      email: 'integrations@cashfree.com',
-      name: 'Cashfree Support Desk',
-      role: 'PG_SUPPORT',
-      domain: 'cashfree.com',
-      companyName: 'Cashfree Payments',
-      isVerified: true
-    }
-  });
-
-  // 5. Seed Issues with varying SLA ages
-  const now = new Date();
-
-  // Fresh issue (1 day old, Green SLA)
-  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  const issue1 = await prisma.issue.create({
-    data: {
-      title: 'payment.captured webhooks delayed by 45 minutes',
-      description: 'We are observing a severe lag in webhook events for captured payments. While transactions show as captured in Razorpay dashboard immediately, the webhook payload reaches our server 40-50 minutes later, causing delayed order dispatch.',
-      status: 'OPEN',
-      merchantId: merchant1.id,
-      gatewayId: razorpay.id,
-      categoryId: catWebhook.id,
-      upvotesCount: 4,
-      nudgeCount: 0,
-      createdAt: oneDayAgo
-    }
-  });
-
-  // 3 days old issue (Yellow SLA)
-  const threeDaysAgo = new Date(now.getTime() - 3.5 * 24 * 60 * 60 * 1000);
-  const issue2 = await prisma.issue.create({
-    data: {
-      title: 'T+2 settlement for Friday batch still not credited',
-      description: 'Friday settlement cycle for amount INR 4,80,000 has been stuck in "Scheduled" status since Monday morning. Ticket #CF-89912 submitted on support portal without response.',
-      status: 'INVESTIGATING',
-      merchantId: merchant2.id,
-      gatewayId: cashfree.id,
-      categoryId: catSettlement.id,
-      upvotesCount: 8,
-      nudgeCount: 1,
-      lastNudgedAt: new Date(now.getTime() - 12 * 60 * 60 * 1000),
-      createdAt: threeDaysAgo
-    }
-  });
-
-  // 6 days old issue (Orange SLA)
-  const sixDaysAgo = new Date(now.getTime() - 6.2 * 24 * 60 * 60 * 1000);
-  const issue3 = await prisma.issue.create({
-    data: {
-      title: 'UPI Intent flow failure rate spike across HDFC & ICICI handles',
-      description: 'UPI intent calls failing intermittently with response code 504 Gateway Timeout. Affects approximately 35% of all mobile checkouts. Support ticket open for 6 days.',
-      status: 'OPEN',
-      merchantId: merchant1.id,
-      gatewayId: payu.id,
-      categoryId: catOutage.id,
-      upvotesCount: 14,
-      nudgeCount: 2,
-      lastNudgedAt: new Date(now.getTime() - 8 * 60 * 60 * 1000),
-      createdAt: sixDaysAgo
-    }
-  });
-
-  // 9 days old issue (Red SLA Breached)
-  const nineDaysAgo = new Date(now.getTime() - 9.5 * 24 * 60 * 60 * 1000);
-  const issue4 = await prisma.issue.create({
-    data: {
-      title: 'Merchant risk hold placed without prior notification or document upload link',
-      description: 'Account payouts frozen for 9 days citing periodic risk audit. All requested documents submitted via email twice, but no verification acknowledgement or turnaround timeline provided.',
-      status: 'OPEN',
-      merchantId: merchant2.id,
-      gatewayId: stripe.id,
-      categoryId: catRisk.id,
-      upvotesCount: 22,
-      nudgeCount: 3,
-      lastNudgedAt: new Date(now.getTime() - 2 * 60 * 60 * 1000),
-      createdAt: nineDaysAgo
-    }
-  });
-
-  // Resolved issue (Handshake completed)
-  const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000);
-  const fourDaysAgo = new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000);
-  const issue5 = await prisma.issue.create({
-    data: {
-      title: 'Duplicate webhook deliveries on order refund event',
-      description: 'Refund webhooks were firing three times in rapid succession, resulting in duplicate credit ledger entries on our internal ERP.',
-      status: 'RESOLVED',
-      merchantId: merchant1.id,
-      gatewayId: razorpay.id,
-      categoryId: catWebhook.id,
-      upvotesCount: 6,
-      nudgeCount: 0,
-      resolutionNotes: 'Identified retry queue misconfiguration in webhook dispatcher. Deployed hotfix to deduplicate refund event dispatching.',
-      proposedAt: fourDaysAgo,
-      resolvedAt: fourDaysAgo,
-      createdAt: fiveDaysAgo
-    }
-  });
-
-  // 6. Comments
-  await prisma.comment.create({
-    data: {
-      issueId: issue2.id,
-      authorId: cashfreePOC.id,
-      content: 'We are investigating the settlement queue for the Friday cycle. Our nodal banking partner had a reconciliation backlog over the weekend. Updates will be posted here.',
-      isOfficial: true,
-      isPinned: true
-    }
-  });
-
-  await prisma.comment.create({
-    data: {
-      issueId: issue2.id,
-      authorId: merchant1.id,
-      content: 'We had the same issue on our account. Our bank received the IMPS credit today at 11:30 AM.',
-      isOfficial: false,
-      isPinned: false
-    }
-  });
-
-  await prisma.comment.create({
-    data: {
-      issueId: issue5.id,
-      authorId: razorpayPOC.id,
-      content: 'Hotfix has been applied to webhook service cluster v3.2. Deduplication cache active. Please verify on your server logs.',
-      isOfficial: true,
-      isPinned: true
-    }
-  });
-
-  console.log('Database seeded successfully.');
+  console.log('Seed synchronization completed.');
 }
 
 main()
