@@ -113,6 +113,7 @@ export default function HomePage() {
   const handleLogout = async () => {
     await fetch('/api/auth/me', { method: 'DELETE' });
     setCurrentUser(null);
+    setIsAdminOpen(false);
   };
 
   const handleUpvote = async (issueId: string, e: React.MouseEvent) => {
@@ -457,7 +458,12 @@ export default function HomePage() {
       <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
-        onSuccess={(user) => setCurrentUser(user)}
+        onSuccess={(user, openAdminDashboard) => {
+          setCurrentUser(user);
+          if (openAdminDashboard) {
+            setIsAdminOpen(true);
+          }
+        }}
       />
 
       <IssueWizardModal

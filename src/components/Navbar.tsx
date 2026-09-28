@@ -88,15 +88,17 @@ export function Navbar({
             {mobileSearchOpen ? <X className="w-3.5 h-3.5" /> : <Search className="w-3.5 h-3.5" />}
           </button>
 
-          {/* Admin Portal Link */}
-          <button
-            type="button"
-            onClick={onOpenAdmin}
-            className="px-2.5 py-1.5 border border-neutral-300 bg-white text-[11px] font-mono uppercase tracking-wider text-neutral-700 hover:border-neutral-900 hover:text-neutral-950 transition-colors"
-            title="GatewayPulse Admin Dashboard"
-          >
-            Admin
-          </button>
+          {/* Admin Portal Link — ONLY visible when signed in as ADMIN */}
+          {currentUser?.role === 'ADMIN' && (
+            <button
+              type="button"
+              onClick={onOpenAdmin}
+              className="px-2.5 py-1.5 border border-neutral-900 bg-neutral-900 text-white text-[11px] font-mono uppercase tracking-wider hover:bg-neutral-800 transition-colors"
+              title="Open GatewayPulse Admin Dashboard"
+            >
+              Admin Dashboard
+            </button>
+          )}
 
           {currentUser ? (
             <div className="flex items-center gap-1.5">
