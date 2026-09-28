@@ -310,75 +310,72 @@ export function IssueDetailModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 sm:p-4">
-      <div className="w-full max-w-3xl bg-white rounded-md border border-neutral-300 shadow-2xl overflow-hidden max-h-[94vh] sm:max-h-[90vh] flex flex-col">
+      <div className="w-full max-w-3xl bg-white border border-neutral-400 shadow-2xl overflow-hidden max-h-[94vh] sm:max-h-[90vh] flex flex-col">
         {/* Modal Top Bar */}
-        <div className="flex items-center justify-between border-b border-neutral-200 px-4 sm:px-6 py-3.5 bg-neutral-50 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center justify-between border-b border-neutral-200 px-4 sm:px-6 py-3.5 bg-[#FAF9F5] shrink-0">
+          <div className="flex items-center gap-3">
             <span className="text-xs font-mono text-neutral-500 uppercase tracking-wider">
-              #{issue?.id ? issue.id.slice(-6) : '...'}
+              Case #{issue?.id ? issue.id.slice(-6).toUpperCase() : '...'}
             </span>
             {issue?.sla && <SlaBadge sla={issue.sla} />}
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-200 transition-colors"
+            className="p-1 text-neutral-400 hover:text-neutral-900 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {loading && !issue ? (
-          <div className="p-12 text-center text-xs text-neutral-500">Loading issue details...</div>
+          <div className="p-12 text-center font-mono text-xs text-neutral-500">Loading case record...</div>
         ) : error ? (
           <div className="p-6 text-xs text-red-700 bg-red-50">{error}</div>
         ) : issue ? (
-          <div className="overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-6 flex-1">
+          <div className="overflow-y-auto p-5 sm:p-6 space-y-5 sm:space-y-6 flex-1">
             {/* Title & Metadata */}
             <div>
-              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2 text-xs text-neutral-600">
-                <span className="inline-flex items-center gap-1 font-medium text-neutral-900 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded-md">
-                  <Building2 className="w-3 h-3 text-neutral-500" />
+              <div className="flex flex-wrap items-baseline gap-2 mb-2 text-xs text-neutral-600">
+                <span className="font-semibold text-neutral-950">
                   {issue.customPgName || issue.gateway.name}
                 </span>
-                <span className="inline-flex items-center gap-1 text-neutral-700 bg-neutral-50 border border-neutral-200 px-2 py-0.5 rounded-md">
-                  <Layers className="w-3 h-3 text-neutral-400" />
+                <span className="text-neutral-300">/</span>
+                <span className="text-neutral-700">
                   {issue.category.name}
                 </span>
-                <span className="text-neutral-400">•</span>
-                <span className="truncate max-w-[130px] sm:max-w-none">
-                  By {issue.merchant?.companyName || issue.merchant?.name || 'Verified Merchant'}
+                <span className="text-neutral-300">·</span>
+                <span className="font-mono text-[11px] text-neutral-500">
+                  Filed by {issue.merchant?.companyName || issue.merchant?.name || 'Verified Merchant'} on {new Date(issue.createdAt).toLocaleDateString()}
                 </span>
-                <span className="text-neutral-400">•</span>
-                <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
               </div>
 
-              <h1 className="text-base sm:text-lg font-semibold text-neutral-900 leading-snug">{issue.title}</h1>
+              <h1 className="font-serif text-lg sm:text-2xl font-semibold text-neutral-950 leading-snug">{issue.title}</h1>
             </div>
 
             {/* Structured Escalation Context Metadata Bar */}
             {(issue.pgTicketId || issue.dateRaised || issue.channelTried || issue.issueDuration) && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-md bg-neutral-50 border border-neutral-200 text-xs font-mono">
-                <div>
-                  <span className="text-[10px] text-neutral-500 block uppercase">PG Ticket ID</span>
-                  <span className="font-semibold text-neutral-900">{issue.pgTicketId || 'Not provided'}</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-neutral-200 border border-neutral-200 bg-[#FAF9F5] text-xs font-mono">
+                <div className="p-3">
+                  <span className="text-[10px] text-neutral-500 block uppercase tracking-wider">PG Ticket ID</span>
+                  <span className="font-semibold text-neutral-950 mt-0.5 block">{issue.pgTicketId || 'Not provided'}</span>
                 </div>
-                <div>
-                  <span className="text-[10px] text-neutral-500 block uppercase">Date Raised</span>
-                  <span className="font-semibold text-neutral-900">{issue.dateRaised || 'Not specified'}</span>
+                <div className="p-3">
+                  <span className="text-[10px] text-neutral-500 block uppercase tracking-wider">Date Raised</span>
+                  <span className="font-semibold text-neutral-950 mt-0.5 block">{issue.dateRaised || 'Not specified'}</span>
                 </div>
-                <div>
-                  <span className="text-[10px] text-neutral-500 block uppercase">Channel Tried</span>
-                  <span className="font-semibold text-neutral-900">{issue.channelTried || 'Standard'}</span>
+                <div className="p-3">
+                  <span className="text-[10px] text-neutral-500 block uppercase tracking-wider">Channel Tried</span>
+                  <span className="font-semibold text-neutral-950 mt-0.5 block">{issue.channelTried || 'Standard'}</span>
                 </div>
-                <div>
-                  <span className="text-[10px] text-neutral-500 block uppercase">Issue Duration</span>
-                  <span className="font-semibold text-neutral-900">{issue.issueDuration || 'Ongoing'}</span>
+                <div className="p-3">
+                  <span className="text-[10px] text-neutral-500 block uppercase tracking-wider">Issue Duration</span>
+                  <span className="font-semibold text-neutral-950 mt-0.5 block">{issue.issueDuration || 'Ongoing'}</span>
                 </div>
               </div>
             )}
 
-            {/* Problem Description */}
-            <div className="p-4 bg-neutral-50 rounded-md border border-neutral-200 text-xs text-neutral-800 leading-relaxed whitespace-pre-line font-mono">
+            {/* Problem Description in Readable Sans-Serif */}
+            <div className="p-4 sm:p-5 bg-[#FAF9F5] border border-neutral-200 text-xs sm:text-[13px] text-neutral-800 leading-relaxed whitespace-pre-line">
               {issue.description}
             </div>
 
@@ -784,7 +781,7 @@ export function IssueDetailModal({
                           {new Date(cmt.createdAt).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-neutral-800 leading-relaxed whitespace-pre-line font-mono text-[11px]">
+                      <p className="text-neutral-800 leading-relaxed whitespace-pre-line text-xs sm:text-[13px]">
                         {cmt.content}
                       </p>
                     </div>

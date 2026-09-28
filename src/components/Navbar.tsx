@@ -1,16 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Plus,
-  User,
-  LogOut,
-  ShieldCheck,
-  Store,
-  Search,
-  X,
-  LayoutDashboard,
-} from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { AuthSession } from '@/lib/auth';
 
 interface NavbarProps {
@@ -35,135 +26,134 @@ export function Navbar({
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   return (
-    <header className="border-b border-neutral-200 bg-white sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-2 sm:gap-4">
-        {/* Brand + Top Anchor Links */}
-        <div className="flex items-center gap-4 sm:gap-6 shrink-0">
-          <a href="#" className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            <div className="w-6 h-6 bg-neutral-900 rounded-md flex items-center justify-center text-white text-xs font-mono font-bold shrink-0">
-              GP
-            </div>
-            <div>
-              <span className="font-semibold text-xs sm:text-sm tracking-tight text-neutral-900 block leading-tight">
-                GatewayPulse
-              </span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-neutral-500 block -mt-0.5 hidden xs:block">
-                Public Board for Merchant Support
-              </span>
-            </div>
+    <header className="border-b border-neutral-300 bg-[#FAF9F5]/95 backdrop-blur-sm sticky top-0 z-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
+        {/* Editorial Masthead Brand + Top Anchor Links */}
+        <div className="flex items-center gap-6 shrink-0">
+          <a href="#" className="flex items-baseline gap-3 shrink-0 group">
+            <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-neutral-950">
+              GatewayPulse
+            </span>
+            <span className="hidden sm:inline-block h-3.5 w-px bg-neutral-300 self-center" />
+            <span className="hidden sm:inline-block font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-500">
+              Public Support Registry
+            </span>
           </a>
 
-          <nav className="hidden lg:flex items-center gap-4 text-xs font-medium text-neutral-600">
-            <a href="#scorecard" className="hover:text-neutral-900 transition-colors">
-              Provider Scorecard
+          <nav className="hidden lg:flex items-center gap-5 text-xs font-medium text-neutral-600 pl-2">
+            <a
+              href="#scorecard"
+              className="hover:text-neutral-950 transition-colors underline-offset-4 hover:underline"
+            >
+              Scorecard
             </a>
-            <a href="#public-board" className="hover:text-neutral-900 transition-colors">
-              Reported Issues
+            <a
+              href="#public-board"
+              className="hover:text-neutral-950 transition-colors underline-offset-4 hover:underline"
+            >
+              Case Ledger
             </a>
-            <a href="#why-fair" className="hover:text-neutral-900 transition-colors">
+            <a
+              href="#why-fair"
+              className="hover:text-neutral-950 transition-colors underline-offset-4 hover:underline"
+            >
               Why This Stays Fair
             </a>
           </nav>
         </div>
 
         {/* Desktop / Tablet Search */}
-        <div className="flex-1 max-w-sm hidden md:block">
+        <div className="flex-1 max-w-xs hidden md:block">
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-2.5" />
             <input
               type="text"
-              placeholder="Search issues by provider, category, or ticket ID..."
+              placeholder="Search provider, category, or ticket ID..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-xs border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+              className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-neutral-300 focus:outline-none focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 transition-colors"
             />
           </div>
         </div>
 
-        {/* Right side actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        {/* Right Side Controls */}
+        <div className="flex items-center gap-2 shrink-0">
           {/* Mobile search toggle */}
           <button
             type="button"
             onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            className="p-1.5 rounded-md text-neutral-600 hover:text-neutral-900 md:hidden border border-neutral-200 hover:bg-neutral-50"
+            className="p-1.5 text-neutral-600 hover:text-neutral-950 md:hidden border border-neutral-300 bg-white"
             title="Search"
           >
             {mobileSearchOpen ? <X className="w-3.5 h-3.5" /> : <Search className="w-3.5 h-3.5" />}
           </button>
 
-          {/* Admin Dashboard Access */}
+          {/* Admin Portal Link */}
           <button
             type="button"
             onClick={onOpenAdmin}
-            className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-md border border-neutral-200 bg-neutral-50 text-xs font-medium text-neutral-700 hover:bg-neutral-100 transition-colors"
+            className="px-2.5 py-1.5 border border-neutral-300 bg-white text-[11px] font-mono uppercase tracking-wider text-neutral-700 hover:border-neutral-900 hover:text-neutral-950 transition-colors"
             title="GatewayPulse Admin Dashboard"
           >
-            <LayoutDashboard className="w-3.5 h-3.5 text-neutral-600" />
-            <span className="hidden sm:inline">Admin</span>
+            Admin
           </button>
 
           {currentUser ? (
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-md border border-neutral-200 bg-neutral-50 text-xs max-w-[110px] sm:max-w-[170px]">
-                {currentUser.role === 'PG_SUPPORT' || currentUser.role === 'ADMIN' ? (
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                ) : (
-                  <Store className="w-3.5 h-3.5 text-neutral-600 shrink-0" />
-                )}
-                <span className="font-medium text-neutral-900 truncate text-[11px] sm:text-xs">
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2 px-2.5 py-1.5 border border-neutral-300 bg-white text-xs max-w-[160px]">
+                <span
+                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                    currentUser.role === 'PG_SUPPORT' || currentUser.role === 'ADMIN'
+                      ? 'bg-emerald-600'
+                      : 'bg-neutral-900'
+                  }`}
+                />
+                <span className="font-mono text-[11px] text-neutral-900 truncate">
                   {currentUser.companyName || currentUser.name || currentUser.email}
                 </span>
-                {currentUser.role === 'PG_SUPPORT' && (
-                  <span className="hidden sm:inline-block text-[10px] bg-sky-100 text-sky-800 px-1 py-0.2 rounded font-medium shrink-0">
-                    PG
-                  </span>
-                )}
               </div>
 
               <button
                 type="button"
                 onClick={onLogout}
-                className="p-1.5 rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+                className="px-2 py-1.5 text-[11px] font-mono uppercase tracking-wider text-neutral-500 hover:text-neutral-950 transition-colors"
                 title="Sign Out"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                Exit
               </button>
             </div>
           ) : (
             <button
               type="button"
               onClick={onOpenAuth}
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-md border border-neutral-300 text-xs font-medium text-neutral-700 bg-white hover:bg-neutral-50 transition-colors"
+              className="px-3 py-1.5 border border-neutral-300 bg-white text-xs font-medium text-neutral-800 hover:border-neutral-900 transition-colors"
             >
-              <User className="w-3.5 h-3.5" />
-              <span className="hidden xs:inline">Sign In</span>
+              Sign In
             </button>
           )}
 
           <button
             type="button"
             onClick={onOpenReport}
-            className="inline-flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-md bg-neutral-900 text-white text-xs font-medium hover:bg-neutral-800 border border-neutral-900 shadow-sm transition-colors shrink-0"
+            className="px-3.5 py-1.5 bg-neutral-950 text-white text-xs font-medium hover:bg-neutral-800 border border-neutral-950 transition-colors shrink-0"
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Report Issue</span>
+            Report Issue
           </button>
         </div>
       </div>
 
       {/* Mobile Search Bar Expandable */}
       {mobileSearchOpen && (
-        <div className="md:hidden border-t border-neutral-200 px-3 py-2 bg-neutral-50">
+        <div className="md:hidden border-t border-neutral-300 px-4 py-2.5 bg-[#FAF9F5]">
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-2.5" />
             <input
               type="text"
               autoFocus
-              placeholder="Search issues..."
+              placeholder="Search provider, category, or ticket ID..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-xs border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 bg-white text-neutral-900"
+              className="w-full pl-8 pr-3 py-1.5 text-xs border border-neutral-300 bg-white focus:outline-none focus:border-neutral-900 text-neutral-900"
             />
           </div>
         </div>

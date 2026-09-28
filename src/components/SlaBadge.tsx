@@ -1,5 +1,4 @@
 import React from 'react';
-import { Clock, AlertTriangle, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { SlaInfo } from '@/lib/sla';
 
 interface SlaBadgeProps {
@@ -8,27 +7,28 @@ interface SlaBadgeProps {
 }
 
 export function SlaBadge({ sla, className = '' }: SlaBadgeProps) {
-  const getIcon = () => {
+  const getDotColor = () => {
     switch (sla.tier) {
       case 'RESOLVED':
-        return <CheckCircle2 className="w-3.5 h-3.5 text-neutral-600" />;
+        return 'bg-emerald-600';
       case 'RED':
-        return <ShieldAlert className="w-3.5 h-3.5 text-red-600" />;
+        return 'bg-red-600';
       case 'ORANGE':
+        return 'bg-orange-500';
       case 'YELLOW':
-        return <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />;
+        return 'bg-amber-500';
       case 'GREEN':
       default:
-        return <Clock className="w-3.5 h-3.5 text-emerald-600" />;
+        return 'bg-emerald-600';
     }
   };
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium rounded-md border ${sla.colorClass.bg} ${sla.colorClass.text} ${sla.colorClass.border} ${className}`}
-      title={sla.isBreached ? 'SLA Breached: Over 7 days unresolved' : `Age: ${sla.daysElapsed} days`}
+      className={`inline-flex items-center gap-2 px-2 py-0.5 text-[11px] font-mono tracking-tight border bg-white border-neutral-300 text-neutral-800 ${className}`}
+      title={sla.isBreached ? 'Reported >7 days ago without resolution' : `Elapsed: ${sla.daysElapsed} days`}
     >
-      {getIcon()}
+      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${getDotColor()}`} />
       <span>{sla.label}</span>
     </span>
   );

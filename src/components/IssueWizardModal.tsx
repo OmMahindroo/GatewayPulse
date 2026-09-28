@@ -1,25 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  X,
-  Building2,
-  Layers,
-  FileText,
-  Upload,
-  AlertCircle,
-  ShieldAlert,
-  Check,
-  ChevronDown,
-  Lock,
-  Calendar,
-  Phone,
-  Mail,
-  Hash,
-  Clock,
-  MessageSquare,
-  CheckCircle2,
-} from 'lucide-react';
+import { X, Upload, ChevronDown, Check } from 'lucide-react';
 import { AuthSession } from '@/lib/auth';
 
 interface IssueWizardModalProps {
@@ -176,7 +158,7 @@ export function IssueWizardModal({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
-  // New structured fields per specification
+  // Structured fields
   const [pgTicketId, setPgTicketId] = useState('');
   const [dateRaised, setDateRaised] = useState('');
   const [channelTried, setChannelTried] = useState('Email');
@@ -219,7 +201,6 @@ export function IssueWizardModal({
       .then((res) => res.json())
       .then((data) => {
         if (data.gateways) {
-          // Sort alphabetically for the dropdown, keeping "Report a PG (Other / Not Listed)" at the bottom
           const sortedForDropdown = [...data.gateways].sort((a, b) => {
             if (a.slug === 'other-pg') return 1;
             if (b.slug === 'other-pg') return -1;
@@ -457,41 +438,42 @@ export function IssueWizardModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4">
-      <div className="w-full max-w-2xl bg-white rounded-md border border-neutral-300 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
-        {/* Modal Header - Fixed at Top */}
-        <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-3.5 bg-neutral-50 shrink-0">
+      <div className="w-full max-w-2xl bg-white border border-neutral-400 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+        {/* Editorial Modal Header */}
+        <div className="flex items-start justify-between border-b border-neutral-200 px-6 py-4 bg-[#FAF9F5] shrink-0">
           <div>
-            <h2 className="text-base font-semibold text-neutral-900">Report Issue</h2>
-            <p className="text-xs text-neutral-500 mt-0.5">
-              Structured facts only, no names of individual people, and public the moment you verify
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-500">
+              Public Case Filing Docket
+            </p>
+            <h2 className="font-serif text-xl font-semibold text-neutral-950 mt-0.5">
+              Report Issue
+            </h2>
+            <p className="text-xs text-neutral-600 mt-0.5">
+              Structured facts only, no names of individual people, and public the moment you submit.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-200 transition-colors"
+            className="p-1 text-neutral-400 hover:text-neutral-900 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden min-h-0">
-          <div className="p-5 sm:p-6 space-y-5 overflow-y-auto flex-1">
+          <div className="p-5 sm:p-6 space-y-6 overflow-y-auto flex-1">
             {error && (
-              <div className="p-3 rounded-md bg-red-50 border border-red-200 text-xs text-red-800 flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
-                <div>{error}</div>
+              <div className="p-3 bg-red-50 border-l-2 border-red-700 text-xs text-red-900">
+                {error}
               </div>
             )}
 
-            {/* Step 1: Select Payment Provider */}
+            {/* Step 01: Select Payment Provider */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-800 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-neutral-500" />
-                  1. Select Payment Provider
-                </span>
+              <label className="block font-mono text-[11px] font-medium text-neutral-600 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <span>01 / Select Payment Provider</span>
                 {selectedGatewayObj && !isOtherPgSelected && (
-                  <span className="text-[11px] text-neutral-500 font-mono font-normal">
+                  <span className="text-[11px] text-neutral-400 font-normal lowercase">
                     {selectedGatewayObj.domain}
                   </span>
                 )}
@@ -501,7 +483,7 @@ export function IssueWizardModal({
                   required
                   value={selectedGatewayId}
                   onChange={(e) => setSelectedGatewayId(e.target.value)}
-                  className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900 font-medium cursor-pointer appearance-none pr-10 shadow-sm transition-colors hover:border-neutral-400"
+                  className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-300 focus:outline-none focus:border-neutral-900 text-neutral-950 font-medium cursor-pointer appearance-none pr-10 transition-colors"
                 >
                   <option value="" disabled>
                     -- Select Payment Provider --
@@ -518,7 +500,7 @@ export function IssueWizardModal({
               </div>
 
               {isOtherPgSelected && (
-                <div className="mt-2">
+                <div className="mt-2.5">
                   <label className="block text-xs font-medium text-neutral-700 mb-1">
                     Specify Payment Provider Name
                   </label>
@@ -528,78 +510,77 @@ export function IssueWizardModal({
                     placeholder="Enter the name of the payment provider..."
                     value={customPgName}
                     onChange={(e) => setCustomPgName(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900"
+                    className="w-full px-3 py-2 text-xs border border-neutral-300 focus:outline-none focus:border-neutral-900 text-neutral-900"
                   />
                 </div>
               )}
             </div>
 
-            {/* Step 2: Select Problem Category */}
+            {/* Step 02: Select Problem Category */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-neutral-500" />
-                2. Select Problem Category
+              <label className="block font-mono text-[11px] font-medium text-neutral-600 uppercase tracking-wider mb-2">
+                02 / Select Problem Category
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                 {categories.map((cat) => (
                   <button
                     key={cat.id}
                     type="button"
                     onClick={() => handleCategorySelect(cat)}
-                    className={`p-2.5 text-left rounded-md border text-xs transition-colors ${
+                    className={`p-2.5 text-left border text-xs transition-colors ${
                       selectedCategoryId === cat.id
-                        ? 'border-neutral-900 bg-neutral-100 text-neutral-900 font-semibold'
-                        : 'border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50'
+                        ? 'border-neutral-950 bg-neutral-950 text-white'
+                        : 'border-neutral-200 bg-white text-neutral-800 hover:bg-[#FAF9F5]'
                     }`}
                   >
                     <p className="font-medium">{cat.name}</p>
-                    <p className="text-[11px] text-neutral-500 mt-0.5 line-clamp-1">{cat.description}</p>
+                    <p
+                      className={`text-[11px] mt-0.5 line-clamp-1 ${
+                        selectedCategoryId === cat.id ? 'text-neutral-300' : 'text-neutral-500'
+                      }`}
+                    >
+                      {cat.description}
+                    </p>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Step 3: Case Timeline & Support Escalation Metadata */}
-            <div className="p-3.5 rounded-md bg-neutral-50 border border-neutral-200 space-y-3.5">
-              <p className="text-xs font-semibold text-neutral-800 uppercase tracking-wider">
-                3. Escalation Context & Timeline
+            {/* Step 03: Escalation Context & Timeline */}
+            <div className="p-4 bg-[#FAF9F5] border border-neutral-200 space-y-4">
+              <p className="font-mono text-[11px] font-medium text-neutral-600 uppercase tracking-wider">
+                03 / Escalation Context &amp; Timeline
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* PG own ticket ID (Optional) */}
                 <div>
-                  <label className="block text-xs font-medium text-neutral-700 mb-1 flex items-center gap-1">
-                    <Hash className="w-3 h-3 text-neutral-400" />
-                    PG own ticket ID (Optional)
+                  <label className="block text-xs font-medium text-neutral-700 mb-1">
+                    PG own ticket ID <span className="text-neutral-400 font-normal">(Optional)</span>
                   </label>
                   <input
                     type="text"
                     placeholder="e.g., TKT-992841 or Case ID"
                     value={pgTicketId}
                     onChange={(e) => setPgTicketId(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900 font-mono"
+                    className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 focus:outline-none focus:border-neutral-900 text-neutral-900 font-mono"
                   />
                 </div>
 
-                {/* Date Raised */}
                 <div>
-                  <label className="block text-xs font-medium text-neutral-700 mb-1 flex items-center gap-1">
-                    <Calendar className="w-3 h-3 text-neutral-400" />
-                    Date Raised (With PG)
+                  <label className="block text-xs font-medium text-neutral-700 mb-1">
+                    Date Raised <span className="text-neutral-400 font-normal">(With PG)</span>
                   </label>
                   <input
                     type="date"
                     value={dateRaised}
                     onChange={(e) => setDateRaised(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900 font-mono"
+                    className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 focus:outline-none focus:border-neutral-900 text-neutral-900 font-mono"
                   />
                 </div>
               </div>
 
-              {/* Channel Tried */}
               <div>
-                <label className="block text-xs font-medium text-neutral-700 mb-1.5 flex items-center gap-1">
-                  <MessageSquare className="w-3 h-3 text-neutral-400" />
+                <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                   Channel Tried
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -608,10 +589,10 @@ export function IssueWizardModal({
                       key={ch}
                       type="button"
                       onClick={() => setChannelTried(ch)}
-                      className={`px-2.5 py-1 rounded-md text-xs border transition-colors ${
+                      className={`px-2.5 py-1 text-xs border transition-colors ${
                         channelTried === ch
-                          ? 'bg-neutral-900 text-white border-neutral-900 font-medium'
-                          : 'bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-100'
+                          ? 'bg-neutral-950 text-white border-neutral-950 font-medium'
+                          : 'bg-white text-neutral-700 border-neutral-300 hover:border-neutral-900'
                       }`}
                     >
                       {ch}
@@ -620,22 +601,20 @@ export function IssueWizardModal({
                 </div>
               </div>
 
-              {/* How long has this been happening? */}
               <div>
-                <label className="block text-xs font-medium text-neutral-700 mb-1.5 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-neutral-400" />
+                <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                   How long has this been happening?
                 </label>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 font-mono">
                   {DURATION_OPTIONS.map((dur) => (
                     <button
                       key={dur}
                       type="button"
                       onClick={() => setIssueDuration(dur)}
-                      className={`px-2.5 py-1 rounded-md text-xs font-mono border transition-colors ${
+                      className={`px-2.5 py-1 text-xs border transition-colors ${
                         issueDuration === dur
-                          ? 'bg-neutral-900 text-white border-neutral-900 font-medium'
-                          : 'bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-100'
+                          ? 'bg-neutral-950 text-white border-neutral-950 font-medium'
+                          : 'bg-white text-neutral-700 border-neutral-300 hover:border-neutral-900'
                       }`}
                     >
                       {dur}
@@ -645,49 +624,41 @@ export function IssueWizardModal({
               </div>
             </div>
 
-            {/* Step 4: Issue Description */}
+            {/* Step 04: Issue Details */}
             <div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                <label className="text-xs font-semibold text-neutral-800 uppercase tracking-wider flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5 text-neutral-500" />
-                  4. Issue Details
+                <label className="font-mono text-[11px] font-medium text-neutral-600 uppercase tracking-wider">
+                  04 / Issue Details
                 </label>
-                <div className="flex items-center gap-1 bg-neutral-100 p-0.5 rounded-md border border-neutral-200 text-xs self-start sm:self-auto">
+                <div className="flex items-center border border-neutral-300 bg-[#FAF9F5] text-xs self-start sm:self-auto">
                   <button
                     type="button"
                     onClick={handleSwitchToTemplate}
-                    className={`px-2.5 py-1 rounded-sm transition-colors ${
+                    className={`px-2.5 py-1 transition-colors ${
                       inputMode === 'TEMPLATE'
-                        ? 'bg-white text-neutral-900 font-medium shadow-sm'
-                        : 'text-neutral-600 hover:text-neutral-900'
+                        ? 'bg-neutral-950 text-white font-medium'
+                        : 'text-neutral-600 hover:text-neutral-950'
                     }`}
                   >
-                    Pre-Written Templates
+                    Standardized Templates
                   </button>
                   <button
                     type="button"
                     onClick={handleSwitchToCustom}
-                    className={`px-2.5 py-1 rounded-sm transition-colors ${
+                    className={`px-2.5 py-1 transition-colors ${
                       inputMode === 'CUSTOM'
-                        ? 'bg-white text-neutral-900 font-medium shadow-sm'
-                        : 'text-neutral-600 hover:text-neutral-900'
+                        ? 'bg-neutral-950 text-white font-medium'
+                        : 'text-neutral-600 hover:text-neutral-950'
                     }`}
                   >
-                    Custom Message
+                    Custom Statement
                   </button>
                 </div>
               </div>
 
               {inputMode === 'TEMPLATE' && (
                 <div className="space-y-2 mb-3">
-                  <p className="text-[11px] font-medium text-neutral-600">
-                    Select a standardized description template (click to populate):
-                  </p>
-                  {availableTemplates.length === 0 ? (
-                    <div className="p-3 bg-neutral-50 rounded-md border border-neutral-200 text-xs text-neutral-600">
-                      No pre-written templates available for this category. You can type your issue below.
-                    </div>
-                  ) : (
+                  {availableTemplates.length > 0 && (
                     <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
                       {availableTemplates.map((tmpl: any) => {
                         const isSelected =
@@ -697,19 +668,19 @@ export function IssueWizardModal({
                             key={tmpl.id}
                             type="button"
                             onClick={() => handleTemplateSelect(tmpl)}
-                            className={`w-full p-2.5 text-left rounded-md border text-xs transition-colors flex items-start justify-between gap-2 ${
+                            className={`w-full p-2.5 text-left border text-xs transition-colors flex items-start justify-between gap-2 ${
                               isSelected
-                                ? 'border-neutral-900 bg-neutral-100/90 text-neutral-900 ring-1 ring-neutral-900 font-medium'
-                                : 'border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50'
+                                ? 'border-neutral-950 bg-[#FAF9F5] text-neutral-950'
+                                : 'border-neutral-200 bg-white text-neutral-700 hover:bg-[#FAF9F5]'
                             }`}
                           >
                             <div className="flex-1">
-                              <p className="font-semibold text-neutral-900">{tmpl.title}</p>
+                              <p className="font-semibold text-neutral-950">{tmpl.title}</p>
                               <p className="text-[11px] text-neutral-600 mt-0.5 leading-relaxed">
                                 {tmpl.content}
                               </p>
                             </div>
-                            {isSelected && <Check className="w-4 h-4 text-neutral-900 shrink-0 mt-0.5" />}
+                            {isSelected && <Check className="w-4 h-4 text-neutral-950 shrink-0 mt-0.5" />}
                           </button>
                         );
                       })}
@@ -718,7 +689,7 @@ export function IssueWizardModal({
                 </div>
               )}
 
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-medium text-neutral-700 mb-1">
                     Issue Summary / Title
@@ -729,13 +700,13 @@ export function IssueWizardModal({
                     placeholder="e.g., T+2 settlement delayed past 48 hours without dashboard update"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900"
+                    className="w-full px-3 py-2 text-xs border border-neutral-300 focus:outline-none focus:border-neutral-900 text-neutral-950"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-neutral-700 mb-1">
-                    Structured Facts & Problem Description (No names of individual people)
+                    Structured Facts &amp; Problem Description (No names of individual people)
                   </label>
                   <textarea
                     required
@@ -743,27 +714,22 @@ export function IssueWizardModal({
                     placeholder="Describe what happened, when it happened, batch/reference numbers, and current status..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900"
+                    className="w-full px-3 py-2 text-xs border border-neutral-300 focus:outline-none focus:border-neutral-900 text-neutral-950 leading-relaxed"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Step 5: Attach Visual Proof */}
+            {/* Step 05: Visual Proof */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <Upload className="w-3.5 h-3.5 text-neutral-500" />
-                5. Attach Visual Proof (Optional)
+              <label className="block font-mono text-[11px] font-medium text-neutral-600 uppercase tracking-wider mb-1.5">
+                05 / Supporting Visual Proof (Optional)
               </label>
+              <p className="text-[11px] text-neutral-500 mb-2">
+                Ensure customer card numbers, CVVs, API keys, and names of individual employees are redacted before attaching screenshots.
+              </p>
 
-              <div className="p-2.5 mb-2 rounded-md bg-amber-50 border border-amber-200 flex items-start gap-2 text-xs text-amber-900">
-                <ShieldAlert className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-semibold">Privacy & Redaction Notice:</span> Ensure customer card numbers, CVVs, API keys, and names of individual employees are blurred before attaching screenshots.
-                </div>
-              </div>
-
-              <div className="border border-dashed border-neutral-300 rounded-md p-3 text-center bg-neutral-50">
+              <div className="border border-dashed border-neutral-300 p-3 text-center bg-[#FAF9F5]">
                 <input
                   type="file"
                   accept="image/*,application/pdf"
@@ -773,94 +739,53 @@ export function IssueWizardModal({
                 />
                 <label
                   htmlFor="file-upload"
-                  className="cursor-pointer inline-flex items-center gap-1.5 text-xs font-medium text-neutral-700 hover:text-neutral-900"
+                  className="cursor-pointer inline-flex items-center gap-1.5 text-xs font-medium text-neutral-800 hover:text-neutral-950 underline underline-offset-4"
                 >
                   <Upload className="w-3.5 h-3.5" />
-                  Upload ticket screenshot or error log (PNG, JPG, PDF)
+                  Attach ticket screenshot or error log (PNG, JPG, PDF)
                 </label>
 
                 {attachments.length > 0 && (
-                  <div className="mt-3 text-left space-y-2">
-                    <p className="text-[11px] font-semibold text-neutral-700 uppercase tracking-wider">
-                      Attached Files ({attachments.length}):
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {attachments.map((att, idx) => {
-                        const isImg =
-                          att.fileType?.startsWith('image/') ||
-                          /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(att.fileName || '') ||
-                          (typeof att.fileUrl === 'string' && att.fileUrl.startsWith('data:image/'));
-
-                        return (
-                          <div
-                            key={idx}
-                            className="flex items-center gap-2.5 p-2 bg-white border border-neutral-200 rounded-md shadow-sm"
-                          >
-                            {isImg ? (
-                              <img
-                                src={att.fileUrl}
-                                alt={att.fileName}
-                                className="w-11 h-11 object-cover rounded border border-neutral-200 bg-neutral-100 shrink-0"
-                              />
-                            ) : (
-                              <div className="w-11 h-11 rounded border border-neutral-200 bg-neutral-100 flex items-center justify-center shrink-0">
-                                <FileText className="w-5 h-5 text-neutral-500" />
-                              </div>
-                            )}
-
-                            <div className="min-w-0 flex-1">
-                              <p
-                                className="font-mono text-xs text-neutral-900 truncate font-medium"
-                                title={att.fileName}
-                              >
-                                {att.fileName}
-                              </p>
-                              <p className="text-[10px] text-neutral-500 font-mono">
-                                {att.fileSize && att.fileSize > 0
-                                  ? `${(att.fileSize / 1024).toFixed(0)} KB`
-                                  : isImg
-                                  ? 'Image preview'
-                                  : 'Document'}
-                              </p>
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={() => setAttachments(attachments.filter((_, i) => i !== idx))}
-                              className="p-1 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                              title="Remove attachment"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
+                  <div className="mt-3 text-left grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {attachments.map((att, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between gap-2 p-2 bg-white border border-neutral-200 text-xs"
+                      >
+                        <span className="font-mono text-[11px] text-neutral-900 truncate">
+                          {att.fileName}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setAttachments(attachments.filter((_, i) => i !== idx))}
+                          className="text-neutral-400 hover:text-red-700"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Step 6: Private Merchant Contact & One-Step OTP Verification */}
-            <div className="p-4 rounded-md bg-neutral-50 border border-neutral-200 space-y-3">
+            {/* Step 06: Private Merchant Contact & 1-Step OTP Verification */}
+            <div className="p-4 bg-[#FAF9F5] border border-neutral-200 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-neutral-800 uppercase tracking-wider flex items-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-emerald-700" />
-                  6. Merchant Verification Details (Never Shown Publicly)
+                <span className="font-mono text-[11px] font-medium text-neutral-600 uppercase tracking-wider">
+                  06 / Merchant Verification (Never Shown Publicly)
                 </span>
                 {currentUser && currentUser.email.toLowerCase() === email.trim().toLowerCase() && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                    Email Verified
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-800">
+                    ● Verified
                   </span>
                 )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-700 mb-1 flex items-center gap-1">
-                    <Mail className="w-3 h-3 text-neutral-400" />
-                    Email ID <span className="text-[10px] text-neutral-500 font-normal">(Never shown Publicly)</span>
+                  <label className="block text-xs font-medium text-neutral-700 mb-1">
+                    Email ID <span className="text-[10px] text-neutral-400 font-normal">(Never shown Publicly)</span>
                   </label>
                   <input
                     type="email"
@@ -869,7 +794,7 @@ export function IssueWizardModal({
                     placeholder="Payment Provider registered email preferred"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900 disabled:bg-neutral-100"
+                    className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 focus:outline-none focus:border-neutral-900 text-neutral-900 disabled:bg-neutral-100"
                   />
                   <p className="text-[10px] text-neutral-500 mt-1">
                     Payment Provider registered email preferred
@@ -877,9 +802,8 @@ export function IssueWizardModal({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-neutral-700 mb-1 flex items-center gap-1">
-                    <Phone className="w-3 h-3 text-neutral-400" />
-                    Mobile No <span className="text-[10px] text-neutral-500 font-normal">(Never shown Publicly)</span>
+                  <label className="block text-xs font-medium text-neutral-700 mb-1">
+                    Mobile No <span className="text-[10px] text-neutral-400 font-normal">(Never shown Publicly)</span>
                   </label>
                   <input
                     type="tel"
@@ -887,17 +811,16 @@ export function IssueWizardModal({
                     placeholder="e.g., +91 98765 43210"
                     value={contactMobile}
                     onChange={(e) => setContactMobile(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-900 text-neutral-900 font-mono"
+                    className="w-full px-3 py-2 text-xs bg-white border border-neutral-300 focus:outline-none focus:border-neutral-900 text-neutral-900 font-mono"
                   />
                 </div>
               </div>
 
-              {/* Inline OTP Verification Step when triggered on Submit */}
               {otpStep && (
-                <div className="p-3.5 rounded-md bg-emerald-50/70 border border-emerald-300 space-y-2.5">
+                <div className="p-3.5 bg-white border border-neutral-900 space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold text-emerald-950">
-                      One-Step Email Verification Required to Publish
+                    <p className="text-xs font-semibold text-neutral-950">
+                      Enter 6-Digit Email Verification Code to Publish
                     </p>
                     <button
                       type="button"
@@ -905,30 +828,30 @@ export function IssueWizardModal({
                         setOtpStep(false);
                         setOtpCode('');
                       }}
-                      className="text-[11px] text-emerald-800 underline hover:text-emerald-950"
+                      className="font-mono text-[11px] text-neutral-600 underline"
                     >
-                      Change Email
+                      Edit Email
                     </button>
                   </div>
                   {otpInfoMessage && (
-                    <p className="text-[11px] text-emerald-800">{otpInfoMessage}</p>
+                    <p className="text-[11px] text-neutral-600">{otpInfoMessage}</p>
                   )}
                   {devOtpHint && (
-                    <p className="text-[11px] font-mono bg-white px-2 py-1 rounded border border-emerald-200 text-emerald-900">
-                      Instant Verification Code: <strong>{devOtpHint}</strong>
+                    <p className="text-[11px] font-mono bg-[#FAF9F5] px-2 py-1 border border-neutral-200 text-neutral-900">
+                      Verification Code: <strong>{devOtpHint}</strong>
                     </p>
                   )}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <input
                       type="text"
                       maxLength={6}
-                      placeholder="Enter 6-digit OTP code"
+                      placeholder="6-digit OTP"
                       value={otpCode}
                       onChange={(e) => setOtpCode(e.target.value)}
-                      className="w-48 px-3 py-2 text-xs font-mono tracking-widest bg-white border border-emerald-400 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-900 text-neutral-900"
+                      className="w-44 px-3 py-2 text-xs font-mono tracking-widest bg-white border border-neutral-900 focus:outline-none text-neutral-950"
                     />
-                    <span className="text-[11px] text-emerald-800">
-                      Valid for 10 minutes
+                    <span className="font-mono text-[11px] text-neutral-500">
+                      Expires in 10m
                     </span>
                   </div>
                 </div>
@@ -937,7 +860,7 @@ export function IssueWizardModal({
           </div>
 
           {/* Pinned Footer Actions */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 sm:px-6 py-3.5 border-t border-neutral-200 bg-neutral-50 shrink-0 gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-6 py-4 border-t border-neutral-200 bg-[#FAF9F5] shrink-0 gap-3">
             <p className="text-[11px] text-neutral-600 leading-snug max-w-md">
               We publish your ticket immediately - subject to a one-step email verification to keep the platform credible and spam-free.
             </p>
@@ -945,14 +868,14 @@ export function IssueWizardModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 sm:flex-initial px-3.5 py-2 text-xs font-medium text-neutral-700 bg-white border border-neutral-300 rounded-md hover:bg-neutral-50 transition-colors text-center"
+                className="flex-1 sm:flex-initial px-3.5 py-2 text-xs font-medium text-neutral-700 bg-white border border-neutral-300 hover:border-neutral-900 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 sm:flex-initial px-4 py-2 text-xs font-medium text-white bg-neutral-900 border border-neutral-900 rounded-md hover:bg-neutral-800 disabled:opacity-50 transition-colors shadow-sm text-center"
+                className="flex-1 sm:flex-initial px-4 py-2 text-xs font-medium text-white bg-neutral-950 border border-neutral-950 hover:bg-neutral-800 disabled:opacity-50 transition-colors"
               >
                 {loading
                   ? 'Processing...'

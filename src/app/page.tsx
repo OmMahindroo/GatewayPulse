@@ -2,16 +2,6 @@
 
 import './globals.css';
 import React, { useState, useEffect } from 'react';
-import {
-  Filter,
-  Plus,
-  RefreshCw,
-  Scale,
-  MessageSquare,
-  FileText,
-  ShieldCheck,
-  ArrowRight,
-} from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { DashboardScorecard, GatewayStat } from '@/components/DashboardScorecard';
 import { IssueCard } from '@/components/IssueCard';
@@ -153,8 +143,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-neutral-50/50">
-      {/* Navigation */}
+    <div className="min-h-screen flex flex-col bg-[#FAF9F5]">
+      {/* Editorial Masthead Navigation */}
       <Navbar
         currentUser={currentUser}
         searchQuery={searchQuery}
@@ -166,55 +156,51 @@ export default function HomePage() {
       />
 
       {/* Main Content */}
-      <main className="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-6 sm:space-y-8 flex-1">
-        {/* Above-the-Fold Split Hero + "Report Issue" Callout Card */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch border-b border-neutral-200 pb-6 sm:pb-7">
-          {/* Left 7 Columns: Mission Statement */}
-          <div className="lg:col-span-7 flex flex-col justify-between space-y-3">
+      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 flex-1">
+        {/* Above-the-Fold Unified Architectural Hero & Report Issue Dispatch Desk */}
+        <section className="border border-neutral-300 bg-white grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-200">
+          {/* Left 7 Columns: Editorial Statement */}
+          <div className="lg:col-span-7 p-5 sm:p-7 flex flex-col justify-between space-y-4">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-neutral-600 bg-neutral-100 border border-neutral-200 px-2.5 py-0.5 rounded-md">
-                <span>GatewayPulse</span>
-                <span>•</span>
-                <span>Merchant Support Accountability</span>
-              </div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-neutral-900 tracking-tight uppercase">
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-500">
+                GatewayPulse · Merchant Support Transparency Registry
+              </p>
+              <h1 className="font-serif text-2xl sm:text-3xl md:text-[34px] font-semibold text-neutral-950 tracking-tight leading-[1.15]">
                 A PUBLIC BOARD FOR MERCHANT SUPPORT
               </h1>
-              <p className="text-sm sm:text-base font-medium text-neutral-800">
+              <p className="font-serif italic text-base sm:text-lg text-neutral-700">
                 Where support tickets go when the inbox goes quiet.
               </p>
             </div>
 
-            <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+            <p className="text-xs sm:text-[13px] text-neutral-600 leading-relaxed max-w-2xl pt-1">
               Small and mid-size merchants frequently lack a dedicated relationship manager, which can leave their support queries with payment providers unanswered for extended periods. GatewayPulse offers a transparent platform where merchants can track and escalate unresolved issues - creating visibility that benefits everyone: merchants gain clarity, gateways gain actionable feedback, and the broader ecosystem gains a more accountable standard for support.
             </p>
           </div>
 
-          {/* Right 5 Columns: Report Issue Action Card */}
-          <div className="lg:col-span-5 p-4 sm:p-5 rounded-md bg-white border border-neutral-300 shadow-sm flex flex-col justify-between space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm sm:text-base font-bold text-neutral-900 uppercase tracking-wide">
+          {/* Right 5 Columns: Institutional Filing Desk ("Report Issue") */}
+          <div className="lg:col-span-5 p-5 sm:p-7 bg-[#FAF9F5]/60 flex flex-col justify-between space-y-5">
+            <div className="space-y-2.5">
+              <div className="flex items-baseline justify-between gap-2">
+                <h2 className="font-serif text-xl sm:text-2xl font-semibold text-neutral-950 tracking-tight">
                   Report Issue
                 </h2>
-                <span className="text-[10px] font-mono uppercase bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded">
-                  1-Step Verified Publishing
+                <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-800">
+                  ● 1-Step Email Verified
                 </span>
               </div>
-              <p className="text-xs text-neutral-600 leading-relaxed">
+              <p className="text-xs sm:text-[13px] text-neutral-600 leading-relaxed">
                 Stuck on something a payment provider hasn&apos;t resolved - settlement, KYC, a frozen account, a refund, or just silence? Log it here. Structured facts only, no names of individual people, and it&apos;s public the moment you submit.
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-neutral-100">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-neutral-200">
               <button
                 type="button"
                 onClick={() => openReportWizard(null)}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-neutral-900 border border-neutral-900 rounded-md hover:bg-neutral-800 transition-colors shadow-sm"
+                className="px-4 py-2.5 text-xs font-medium text-white bg-neutral-950 border border-neutral-950 hover:bg-neutral-800 transition-colors"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Report Issue</span>
-                <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
+                Report Issue &rarr;
               </button>
 
               <button
@@ -223,10 +209,9 @@ export default function HomePage() {
                   fetchGateways();
                   fetchIssues();
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-700 bg-neutral-50 border border-neutral-200 rounded-md hover:bg-neutral-100 transition-colors"
+                className="px-3 py-2 text-[11px] font-mono uppercase tracking-wider text-neutral-600 bg-white border border-neutral-300 hover:border-neutral-900 hover:text-neutral-950 transition-colors"
               >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Refresh Board</span>
+                Refresh Ledger
               </button>
             </div>
           </div>
@@ -242,14 +227,18 @@ export default function HomePage() {
           />
         </section>
 
-        {/* Feed & Filters Section */}
-        <section id="public-board" className="space-y-4 pt-1">
-          {/* Filter Bar */}
-          <div className="p-3 sm:p-3.5 rounded-md border border-neutral-200 bg-white shadow-sm space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-neutral-800 uppercase tracking-wider">
-                <Filter className="w-3.5 h-3.5 text-neutral-500" />
-                <span>Report Issue Filters</span>
+        {/* Unified Case Ledger & Filter Bar */}
+        <section id="public-board" className="border border-neutral-300 bg-white divide-y divide-neutral-200">
+          {/* Ledger Header & Filter Controls */}
+          <div className="p-4 sm:p-6 bg-[#FAF9F5] space-y-4">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <div>
+                <h2 className="font-serif text-lg sm:text-xl font-semibold text-neutral-950 tracking-tight">
+                  Public Case Ledger
+                </h2>
+                <p className="text-xs text-neutral-500 mt-0.5">
+                  Showing {issues.length} documented merchant support cases · Sorted by latest activity
+                </p>
               </div>
 
               {(selectedGateway ||
@@ -266,20 +255,20 @@ export default function HomePage() {
                     setSelectedStatus(null);
                     setSearchQuery('');
                   }}
-                  className="text-xs text-neutral-600 underline hover:text-neutral-900"
+                  className="font-mono text-[11px] uppercase tracking-wider text-neutral-600 underline hover:text-neutral-950"
                 >
-                  Clear all filters
+                  Clear All Filters
                 </button>
               )}
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 text-xs">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-2.5 text-xs">
               {/* Filter Dropdowns */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1">
                 <select
                   value={selectedGateway || ''}
                   onChange={(e) => setSelectedGateway(e.target.value || null)}
-                  className="w-full px-2.5 py-1.5 rounded-md border border-neutral-300 bg-white text-neutral-800 focus:outline-none focus:ring-1 focus:ring-neutral-900"
+                  className="w-full px-3 py-2 border border-neutral-300 bg-white text-neutral-900 focus:outline-none focus:border-neutral-900"
                 >
                   <option value="">All Payment Providers ({gateways.length})</option>
                   {gateways.map((gw) => (
@@ -292,7 +281,7 @@ export default function HomePage() {
                 <select
                   value={selectedCategory || ''}
                   onChange={(e) => setSelectedCategory(e.target.value || null)}
-                  className="w-full px-2.5 py-1.5 rounded-md border border-neutral-300 bg-white text-neutral-800 focus:outline-none focus:ring-1 focus:ring-neutral-900"
+                  className="w-full px-3 py-2 border border-neutral-300 bg-white text-neutral-900 focus:outline-none focus:border-neutral-900"
                 >
                   <option value="">All Problem Categories</option>
                   {categories.map((cat) => (
@@ -305,7 +294,7 @@ export default function HomePage() {
                 <select
                   value={selectedStatus || ''}
                   onChange={(e) => setSelectedStatus(e.target.value || null)}
-                  className="w-full px-2.5 py-1.5 rounded-md border border-neutral-300 bg-white text-neutral-800 focus:outline-none focus:ring-1 focus:ring-neutral-900"
+                  className="w-full px-3 py-2 border border-neutral-300 bg-white text-neutral-900 focus:outline-none focus:border-neutral-900"
                 >
                   <option value="">All Statuses</option>
                   <option value="OPEN">Active / Unresolved</option>
@@ -315,15 +304,15 @@ export default function HomePage() {
                 </select>
               </div>
 
-              {/* SLA Filter Buttons */}
-              <div className="flex flex-wrap items-center gap-1 sm:pl-2 sm:border-l border-neutral-200 pt-1 sm:pt-0">
+              {/* Elapsed Time Filter Buttons */}
+              <div className="flex items-center gap-1.5 font-mono text-[11px]">
                 <button
                   type="button"
                   onClick={() => setSelectedSla(selectedSla === 'GREEN' ? null : 'GREEN')}
-                  className={`flex-1 sm:flex-initial px-2 py-1 rounded-md text-[11px] sm:text-xs font-mono border transition-colors text-center ${
+                  className={`flex-1 lg:flex-initial px-2.5 py-2 border transition-colors ${
                     selectedSla === 'GREEN'
-                      ? 'bg-emerald-100 text-emerald-900 border-emerald-400 font-semibold'
-                      : 'bg-emerald-50/50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
+                      ? 'bg-neutral-950 text-white border-neutral-950'
+                      : 'bg-white text-neutral-700 border-neutral-300 hover:border-neutral-900'
                   }`}
                 >
                   &lt;2d
@@ -331,10 +320,10 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setSelectedSla(selectedSla === 'YELLOW' ? null : 'YELLOW')}
-                  className={`flex-1 sm:flex-initial px-2 py-1 rounded-md text-[11px] sm:text-xs font-mono border transition-colors text-center ${
+                  className={`flex-1 lg:flex-initial px-2.5 py-2 border transition-colors ${
                     selectedSla === 'YELLOW'
-                      ? 'bg-amber-100 text-amber-900 border-amber-400 font-semibold'
-                      : 'bg-amber-50/50 text-amber-800 border-amber-200 hover:bg-amber-100'
+                      ? 'bg-neutral-950 text-white border-neutral-950'
+                      : 'bg-white text-neutral-700 border-neutral-300 hover:border-neutral-900'
                   }`}
                 >
                   3-4d
@@ -342,10 +331,10 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setSelectedSla(selectedSla === 'ORANGE' ? null : 'ORANGE')}
-                  className={`flex-1 sm:flex-initial px-2 py-1 rounded-md text-[11px] sm:text-xs font-mono border transition-colors text-center ${
+                  className={`flex-1 lg:flex-initial px-2.5 py-2 border transition-colors ${
                     selectedSla === 'ORANGE'
-                      ? 'bg-orange-100 text-orange-900 border-orange-400 font-semibold'
-                      : 'bg-orange-50/50 text-orange-800 border-orange-200 hover:bg-orange-100'
+                      ? 'bg-neutral-950 text-white border-neutral-950'
+                      : 'bg-white text-neutral-700 border-neutral-300 hover:border-neutral-900'
                   }`}
                 >
                   5-7d
@@ -353,10 +342,10 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setSelectedSla(selectedSla === 'RED' ? null : 'RED')}
-                  className={`flex-1 sm:flex-initial px-2 py-1 rounded-md text-[11px] sm:text-xs font-mono border transition-colors text-center ${
+                  className={`flex-1 lg:flex-initial px-2.5 py-2 border transition-colors ${
                     selectedSla === 'RED'
-                      ? 'bg-red-100 text-red-900 border-red-400 font-semibold'
-                      : 'bg-red-50/50 text-red-800 border-red-200 hover:bg-red-100'
+                      ? 'bg-neutral-950 text-white border-neutral-950'
+                      : 'bg-white text-neutral-700 border-neutral-300 hover:border-neutral-900'
                   }`}
                 >
                   &gt;7d
@@ -365,99 +354,86 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Reported Issues Feed List */}
-          <div className="space-y-2.5">
-            <div className="flex items-center justify-between text-xs text-neutral-500 px-1">
-              <span>Showing {issues.length} reported issues</span>
-              <span>Sorted by latest activity</span>
+          {/* Continuous Case Ledger Rows */}
+          {loading ? (
+            <div className="p-12 text-center font-mono text-xs text-neutral-500">
+              Loading case ledger...
             </div>
-
-            {loading ? (
-              <div className="p-12 text-center text-xs text-neutral-500 bg-white border border-neutral-200 rounded-md">
-                Loading reported issues...
-              </div>
-            ) : issues.length === 0 ? (
-              <div className="p-12 text-center bg-white border border-neutral-200 rounded-md space-y-2">
-                <p className="text-xs font-medium text-neutral-700">
-                  No reported issues match the selected filters.
-                </p>
-                <p className="text-[11px] text-neutral-500">
-                  Try adjusting the payment provider, category, or status filter criteria.
-                </p>
-              </div>
-            ) : (
-              issues.map((issue) => (
+          ) : issues.length === 0 ? (
+            <div className="p-12 text-center space-y-1.5">
+              <p className="text-xs font-medium text-neutral-800">
+                No reported issues match the active filter criteria.
+              </p>
+              <p className="text-xs text-neutral-500">
+                Adjust the payment provider, category, or elapsed time filters above.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-neutral-200">
+              {issues.map((issue) => (
                 <IssueCard
                   key={issue.id}
                   issue={issue}
                   onClick={() => setSelectedIssueId(issue.id)}
                   onUpvote={(e) => handleUpvote(issue.id, e)}
                 />
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
 
-        {/* "Why This Stays Fair" Section (2x2 Grid per exact specification) */}
-        <section id="why-fair" className="pt-4 border-t border-neutral-200 space-y-4">
-          <div>
-            <h2 className="text-base sm:text-lg font-bold text-neutral-900 tracking-tight">
+        {/* "Why This Stays Fair" Architectural 2x2 Hairline Grid */}
+        <section id="why-fair" className="border border-neutral-300 bg-white">
+          <div className="px-5 sm:px-6 py-4 border-b border-neutral-200 bg-[#FAF9F5]">
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-500">
+              Platform Governance &amp; Neutrality Charter
+            </p>
+            <h2 className="font-serif text-lg sm:text-xl font-semibold text-neutral-950 tracking-tight mt-0.5">
               Why This Stays Fair
             </h2>
-            <p className="text-xs text-neutral-500 mt-0.5">
-              Institutional neutrality principles governing every merchant report and official payment provider response
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
-            {/* Card 1 */}
-            <div className="p-4 sm:p-5 rounded-md border border-neutral-200 bg-white shadow-sm space-y-2">
-              <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-neutral-700 shrink-0" />
-                <h3 className="text-xs sm:text-sm font-semibold text-neutral-900">
-                  Focus on the issue, not individuals
-                </h3>
-              </div>
-              <p className="text-xs text-neutral-600 leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y divide-neutral-200 md:divide-y-0">
+            {/* Quadrant 01 */}
+            <div className="p-5 sm:p-6 md:border-r md:border-b border-neutral-200 space-y-2">
+              <span className="font-mono text-[11px] text-neutral-400 block">01</span>
+              <h3 className="font-serif text-base sm:text-lg font-semibold text-neutral-950">
+                Focus on the issue, not individuals
+              </h3>
+              <p className="text-xs sm:text-[13px] text-neutral-600 leading-relaxed">
                 Cases focus on the payment issue - what happened, when it happened, the category involved and the current status. We don&apos;t encourage personal attacks, naming individual support employees, or sharing unnecessary personal information.
               </p>
             </div>
 
-            {/* Card 2 */}
-            <div className="p-4 sm:p-5 rounded-md border border-neutral-200 bg-white shadow-sm space-y-2">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-neutral-700 shrink-0" />
-                <h3 className="text-xs sm:text-sm font-semibold text-neutral-900">
-                  Both sides can be heard
-                </h3>
-              </div>
-              <p className="text-xs text-neutral-600 leading-relaxed">
+            {/* Quadrant 02 */}
+            <div className="p-5 sm:p-6 md:border-b border-neutral-200 space-y-2">
+              <span className="font-mono text-[11px] text-neutral-400 block">02</span>
+              <h3 className="font-serif text-base sm:text-lg font-semibold text-neutral-950">
+                Both sides can be heard
+              </h3>
+              <p className="text-xs sm:text-[13px] text-neutral-600 leading-relaxed">
                 Merchants can report their experience, and payment providers can respond, clarify or share an update on a case. Provider responses are presented alongside the original report so users can understand the issue from both perspectives.
               </p>
             </div>
 
-            {/* Card 3 */}
-            <div className="p-4 sm:p-5 rounded-md border border-neutral-200 bg-white shadow-sm space-y-2">
-              <div className="flex items-center gap-2">
-                <Scale className="w-4 h-4 text-neutral-700 shrink-0" />
-                <h3 className="text-xs sm:text-sm font-semibold text-neutral-900">
-                  We don&apos;t decide who is right
-                </h3>
-              </div>
-              <p className="text-xs text-neutral-600 leading-relaxed">
+            {/* Quadrant 03 */}
+            <div className="p-5 sm:p-6 md:border-r border-neutral-200 space-y-2">
+              <span className="font-mono text-[11px] text-neutral-400 block">03</span>
+              <h3 className="font-serif text-base sm:text-lg font-semibold text-neutral-950">
+                We don&apos;t decide who is right
+              </h3>
+              <p className="text-xs sm:text-[13px] text-neutral-600 leading-relaxed">
                 The platform records reported experiences and updates; it does not act as a judge between merchants and payment providers. Information is presented as submitted or updated by the relevant party, and users should consider the available context before drawing conclusions.
               </p>
             </div>
 
-            {/* Card 4 */}
-            <div className="p-4 sm:p-5 rounded-md border border-neutral-200 bg-white shadow-sm space-y-2">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-neutral-700 shrink-0" />
-                <h3 className="text-xs sm:text-sm font-semibold text-neutral-900">
-                  The goal is better support
-                </h3>
-              </div>
-              <p className="text-xs text-neutral-600 leading-relaxed">
+            {/* Quadrant 04 */}
+            <div className="p-5 sm:p-6 space-y-2">
+              <span className="font-mono text-[11px] text-neutral-400 block">04</span>
+              <h3 className="font-serif text-base sm:text-lg font-semibold text-neutral-950">
+                The goal is better support
+              </h3>
+              <p className="text-xs sm:text-[13px] text-neutral-600 leading-relaxed">
                 The purpose isn&apos;t to shame payment providers. It&apos;s to make payment-support experiences more transparent, encourage clearer escalation and help merchants find a path forward when something goes wrong.
               </p>
             </div>
@@ -465,13 +441,13 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* Footer Statement per exact specification */}
-      <footer className="border-t border-neutral-200 bg-white py-8 mt-10 text-center text-xs text-neutral-500">
-        <div className="max-w-4xl mx-auto px-4 space-y-2">
-          <p className="font-semibold text-sm text-neutral-900 tracking-tight">
+      {/* Editorial Colophon Footer */}
+      <footer className="border-t border-neutral-300 bg-white py-10 mt-12 text-center">
+        <div className="max-w-3xl mx-auto px-4 space-y-2.5">
+          <p className="font-serif text-base sm:text-lg font-semibold text-neutral-950 tracking-tight">
             Payment Provider Issues. Reported. Tracked. Made Transparent.
           </p>
-          <p className="text-xs text-neutral-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-xs sm:text-[13px] text-neutral-600 leading-relaxed max-w-2xl mx-auto">
             A public, anonymous platform for documenting payment support issues faced by merchants. Independent of payment gateways. We document what is reported - we don&apos;t decide who is right.
           </p>
         </div>

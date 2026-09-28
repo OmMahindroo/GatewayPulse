@@ -1,16 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  AlertOctagon,
-  Activity,
-  CheckCircle2,
-  Building2,
-  ShieldCheck,
-  ChevronDown,
-  ChevronUp,
-  Info,
-} from 'lucide-react';
 
 export interface GatewayStat {
   id: string;
@@ -53,7 +43,6 @@ export function DashboardScorecard({
 }: DashboardScorecardProps) {
   const [showAllProviders, setShowAllProviders] = useState(false);
 
-  // Exclude "other-pg" meta entry from the main scorecard rows unless it has reports
   const standardGateways = gateways.filter(
     (g) => g.slug !== 'other-pg' || g.totalComplaints > 0
   );
@@ -67,192 +56,186 @@ export function DashboardScorecard({
     : standardGateways.slice(0, 8);
 
   return (
-    <div className="space-y-4">
-      {/* Top Level Summary Cards: Verified (Green) -> Active (Yellow) -> Critical (Red) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+    <div className="space-y-6">
+      {/* Unified 3-Column Architectural Ledger Strip (Green -> Yellow -> Red) */}
+      <div className="border border-neutral-300 bg-white grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-neutral-200">
         {/* 1. Verified Resolutions (Green) */}
-        <div className="p-3.5 sm:p-4 rounded-md border border-emerald-200 bg-emerald-50/40 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] sm:text-xs font-semibold text-emerald-800 uppercase tracking-wider">
+        <div className="p-4 sm:p-5 border-t-[3px] border-t-emerald-700">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-neutral-600">
               Verified Resolutions
             </span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
-          <p className="text-xl sm:text-2xl font-bold font-mono text-emerald-950 mt-1.5">
+          <p className="text-2xl sm:text-3xl font-semibold font-mono text-neutral-950 mt-2 tracking-tight">
             {totalResolved}
           </p>
-          <p className="text-[10px] sm:text-[11px] text-emerald-700 mt-0.5">
+          <p className="text-xs text-neutral-500 mt-1">
             Merchant-confirmed resolutions
           </p>
         </div>
 
         {/* 2. Active Incidents (Yellow / Amber) */}
-        <div className="p-3.5 sm:p-4 rounded-md border border-amber-200 bg-amber-50/40 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] sm:text-xs font-semibold text-amber-800 uppercase tracking-wider">
+        <div className="p-4 sm:p-5 border-t-[3px] border-t-amber-500">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-neutral-600">
               Active Incidents
             </span>
-            <Activity className="w-4 h-4 text-amber-600" />
           </div>
-          <p className="text-xl sm:text-2xl font-bold font-mono text-amber-950 mt-1.5">
+          <p className="text-2xl sm:text-3xl font-semibold font-mono text-neutral-950 mt-2 tracking-tight">
             {totalOpen}
           </p>
-          <p className="text-[10px] sm:text-[11px] text-amber-700 mt-0.5">
+          <p className="text-xs text-neutral-500 mt-1">
             Across {standardGateways.length} tracked payment providers
           </p>
         </div>
 
         {/* 3. Critical (Red) */}
-        <div className="p-3.5 sm:p-4 rounded-md border border-red-200 bg-red-50/40 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] sm:text-xs font-semibold text-red-800 uppercase tracking-wider">
+        <div className="p-4 sm:p-5 border-t-[3px] border-t-red-700">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-red-600 shrink-0" />
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-neutral-600">
               Critical
             </span>
-            <AlertOctagon className="w-4 h-4 text-red-600" />
           </div>
-          <p className="text-xl sm:text-2xl font-bold font-mono text-red-950 mt-1.5">
+          <p className="text-2xl sm:text-3xl font-semibold font-mono text-neutral-950 mt-2 tracking-tight">
             {totalBreached}
           </p>
-          <p className="text-[10px] sm:text-[11px] text-red-700 mt-0.5">
+          <p className="text-xs text-neutral-500 mt-1">
             Reported &gt;7 days ago
           </p>
         </div>
       </div>
 
-      {/* Gateway Scorecard Card Container */}
-      <div className="border border-neutral-200 rounded-md bg-white shadow-sm overflow-hidden">
-        <div className="px-4 sm:px-5 py-3 border-b border-neutral-200 bg-neutral-50 flex flex-wrap items-center justify-between gap-2">
+      {/* Provider Support Scorecard Ledger */}
+      <div className="border border-neutral-300 bg-white">
+        <div className="px-4 sm:px-6 py-4 border-b border-neutral-200 flex flex-wrap items-baseline justify-between gap-3">
           <div>
-            <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider">
+            <h2 className="font-serif text-lg sm:text-xl font-semibold text-neutral-950 tracking-tight">
               Payment Provider Support Scorecard
-            </h3>
-            <p className="text-[10px] sm:text-[11px] text-neutral-500 mt-0.5">
-              Click any provider name to view its Public Provider Profile, category breakdown, and resolution metrics
+            </h2>
+            <p className="text-xs text-neutral-500 mt-0.5">
+              Select any provider to inspect its public dossier, category breakdown, or filter the case ledger below.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {selectedGateway && (
               <button
                 onClick={() => onSelectGateway(null)}
-                className="text-xs text-neutral-600 underline hover:text-neutral-900"
+                className="font-mono text-[11px] uppercase tracking-wider text-neutral-600 underline hover:text-neutral-950"
               >
-                Reset Provider Filter
+                Reset Filter
               </button>
             )}
             {standardGateways.length > 8 && (
               <button
                 type="button"
                 onClick={() => setShowAllProviders(!showAllProviders)}
-                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-neutral-700 bg-white border border-neutral-300 rounded-md hover:bg-neutral-100 transition-colors"
+                className="px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-neutral-800 bg-[#FAF9F5] border border-neutral-300 hover:border-neutral-900 transition-colors"
               >
-                <span>
-                  {showAllProviders
-                    ? 'Show Top 8 Providers'
-                    : `View All ${standardGateways.length} Providers`}
-                </span>
-                {showAllProviders ? (
-                  <ChevronUp className="w-3.5 h-3.5" />
-                ) : (
-                  <ChevronDown className="w-3.5 h-3.5" />
-                )}
+                {showAllProviders
+                  ? 'Show Top 8 Providers'
+                  : `Index All ${standardGateways.length} Providers`}
               </button>
             )}
           </div>
         </div>
 
-        {/* Desktop & Tablet: Full Table View (>= 768px) */}
+        {/* Desktop & Tablet: Financial Ledger Table View (>= 768px) */}
         <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-neutral-200 bg-neutral-50/60 text-neutral-600 font-medium font-mono text-[11px]">
-                <th className="py-2.5 px-4">Providers</th>
-                <th className="py-2.5 px-4 text-center">Reported</th>
-                <th className="py-2.5 px-4 text-center">Resolved</th>
-                <th className="py-2.5 px-4 text-center">No recent Update &gt;7days</th>
-                <th className="py-2.5 px-4 text-center">Avg. Response time</th>
-                <th className="py-2.5 px-4 text-center">Resolution Rate</th>
-                <th className="py-2.5 px-4 text-right">Actions</th>
+              <tr className="border-b border-neutral-200 bg-[#FAF9F5] text-neutral-500 font-mono text-[10px] uppercase tracking-[0.1em]">
+                <th className="py-3 px-6 font-medium">Providers</th>
+                <th className="py-3 px-4 text-right font-medium">Reported</th>
+                <th className="py-3 px-4 text-right font-medium">Resolved</th>
+                <th className="py-3 px-4 text-right font-medium">No recent Update &gt;7days</th>
+                <th className="py-3 px-4 text-right font-medium">Avg. Response time</th>
+                <th className="py-3 px-4 text-right font-medium">Resolution Rate</th>
+                <th className="py-3 px-6 text-right font-medium">Dossier / Feed</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-200">
+            <tbody className="divide-y divide-neutral-200 text-xs">
               {displayedGateways.map((gw) => {
                 const isSelected = selectedGateway === gw.slug;
                 return (
                   <tr
                     key={gw.id}
-                    className={`hover:bg-neutral-50 transition-colors ${
-                      isSelected ? 'bg-neutral-100/70 font-semibold' : ''
+                    className={`transition-colors ${
+                      isSelected ? 'bg-neutral-100/90' : 'hover:bg-[#FAF9F5]'
                     }`}
                   >
-                    <td className="py-3 px-4 font-medium text-neutral-900">
-                      <div className="flex items-center gap-2">
+                    <td className="py-3.5 px-6">
+                      <div className="flex items-baseline gap-2.5">
                         <button
                           type="button"
                           onClick={() => onOpenProviderProfile(gw)}
-                          className="text-left font-semibold text-neutral-900 hover:underline flex items-center gap-1.5"
+                          className="text-left font-medium text-neutral-950 hover:underline underline-offset-4"
                         >
-                          <span>{gw.name}</span>
-                          {gw.isClaimed && (
-                            <span
-                              className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded"
-                              title="Claimed & Verified Provider Profile"
-                            >
-                              <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                              Claimed
-                            </span>
-                          )}
+                          {gw.name}
                         </button>
-                        <span className="text-[10px] font-mono text-neutral-400">
-                          @{gw.domain}
+                        <span className="text-[11px] font-mono text-neutral-400">
+                          {gw.domain}
                         </span>
+                        {gw.isClaimed && (
+                          <span
+                            className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-emerald-800"
+                            title="Claimed & Verified Provider Profile"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                            Claimed
+                          </span>
+                        )}
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-center font-mono text-neutral-900">
+                    <td className="py-3.5 px-4 text-right font-mono text-neutral-900">
                       {gw.totalComplaints}
                     </td>
-                    <td className="py-3 px-4 text-center font-mono text-emerald-800 font-medium">
+                    <td className="py-3.5 px-4 text-right font-mono text-emerald-800 font-medium">
                       {gw.resolvedCount}
                     </td>
-                    <td className="py-3 px-4 text-center font-mono">
+                    <td className="py-3.5 px-4 text-right font-mono">
                       {gw.breachedComplaints > 0 ? (
-                        <span className="inline-block px-1.5 py-0.5 rounded bg-red-100 text-red-800 font-medium">
+                        <span className="text-red-700 font-semibold">
                           {gw.breachedComplaints}
                         </span>
                       ) : (
                         <span className="text-neutral-400">0</span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-center font-mono text-neutral-700">
-                      {gw.avgResolutionHours ? `${gw.avgResolutionHours} hrs` : 'Pending data'}
+                    <td className="py-3.5 px-4 text-right font-mono text-neutral-700">
+                      {gw.avgResolutionHours ? `${gw.avgResolutionHours} hrs` : '—'}
                     </td>
-                    <td className="py-3 px-4 text-center font-mono">
+                    <td className="py-3.5 px-4 text-right font-mono">
                       {gw.resolutionRate !== null && gw.resolutionRate !== undefined ? (
-                        <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 font-medium">
+                        <span className="text-neutral-950 font-medium">
                           {gw.resolutionRate}%
                         </span>
                       ) : (
-                        <span className="text-neutral-400">-</span>
+                        <span className="text-neutral-400">—</span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="inline-flex items-center gap-1.5">
+                    <td className="py-3.5 px-6 text-right">
+                      <div className="inline-flex items-center gap-3 font-mono text-[11px]">
                         <button
                           type="button"
                           onClick={() => onOpenProviderProfile(gw)}
-                          className="px-2.5 py-1 text-xs rounded-md border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-100 transition-colors"
+                          className="text-neutral-600 hover:text-neutral-950 underline underline-offset-4"
                         >
                           Profile
                         </button>
+                        <span className="text-neutral-300">|</span>
                         <button
                           type="button"
                           onClick={() => onSelectGateway(isSelected ? null : gw.slug)}
-                          className={`px-2.5 py-1 text-xs rounded-md border transition-colors ${
+                          className={`${
                             isSelected
-                              ? 'bg-neutral-900 text-white border-neutral-900'
-                              : 'bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-100'
+                              ? 'text-neutral-950 font-bold underline underline-offset-4'
+                              : 'text-neutral-600 hover:text-neutral-950'
                           }`}
                         >
-                          {isSelected ? 'Selected' : 'View Feed'}
+                          {isSelected ? 'Filtered' : 'Filter'}
                         </button>
                       </div>
                     </td>
@@ -263,75 +246,72 @@ export function DashboardScorecard({
           </table>
         </div>
 
-        {/* Mobile View (< 768px): Card-based responsive list */}
+        {/* Mobile View (< 768px): Clean Ledger List */}
         <div className="md:hidden divide-y divide-neutral-200">
           {displayedGateways.map((gw) => {
             const isSelected = selectedGateway === gw.slug;
             return (
               <div
                 key={gw.id}
-                className={`p-3.5 space-y-2.5 transition-colors ${
-                  isSelected ? 'bg-neutral-100/70' : 'hover:bg-neutral-50'
+                className={`p-4 space-y-3 transition-colors ${
+                  isSelected ? 'bg-neutral-100/80' : 'hover:bg-[#FAF9F5]'
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-baseline justify-between gap-2">
                   <button
                     type="button"
                     onClick={() => onOpenProviderProfile(gw)}
-                    className="flex items-center gap-1.5 text-left"
+                    className="flex items-baseline gap-2 text-left"
                   >
-                    <span className="font-semibold text-xs text-neutral-900 underline">
+                    <span className="font-semibold text-sm text-neutral-950 underline underline-offset-4">
                       {gw.name}
                     </span>
-                    <span className="text-[10px] font-mono text-neutral-400">@{gw.domain}</span>
+                    <span className="text-[11px] font-mono text-neutral-400">{gw.domain}</span>
                   </button>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2 font-mono text-[11px]">
                     <button
                       type="button"
                       onClick={() => onOpenProviderProfile(gw)}
-                      className="text-[10px] px-2 py-0.5 rounded border border-neutral-300 bg-white text-neutral-700"
+                      className="text-neutral-700 underline"
                     >
                       Profile
                     </button>
+                    <span className="text-neutral-300">|</span>
                     <button
                       type="button"
                       onClick={() => onSelectGateway(isSelected ? null : gw.slug)}
-                      className={`text-[10px] px-2 py-0.5 rounded border ${
-                        isSelected
-                          ? 'bg-neutral-900 text-white border-neutral-900'
-                          : 'bg-white text-neutral-700 border-neutral-300'
-                      }`}
+                      className={isSelected ? 'font-bold text-neutral-950' : 'text-neutral-600'}
                     >
-                      {isSelected ? 'Active Filter' : 'Filter Feed'}
+                      {isSelected ? 'Active' : 'Filter'}
                     </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-5 gap-1 text-center font-mono text-[10px]">
-                  <div className="bg-neutral-50 border border-neutral-200 p-1.5 rounded">
-                    <span className="text-neutral-500 block text-[9px] uppercase">Reported</span>
-                    <span className="font-bold text-neutral-900">{gw.totalComplaints}</span>
+                <div className="grid grid-cols-5 gap-2 pt-1 border-t border-neutral-100 font-mono text-[11px]">
+                  <div>
+                    <span className="text-neutral-400 block text-[9px] uppercase">Reported</span>
+                    <span className="font-semibold text-neutral-900">{gw.totalComplaints}</span>
                   </div>
-                  <div className="bg-emerald-50/60 border border-emerald-200 p-1.5 rounded">
-                    <span className="text-emerald-700 block text-[9px] uppercase">Resolved</span>
-                    <span className="font-bold text-emerald-800">{gw.resolvedCount}</span>
+                  <div>
+                    <span className="text-neutral-400 block text-[9px] uppercase">Resolved</span>
+                    <span className="font-semibold text-emerald-800">{gw.resolvedCount}</span>
                   </div>
-                  <div className="bg-red-50/60 border border-red-200 p-1.5 rounded">
-                    <span className="text-red-700 block text-[9px] uppercase">&gt;7d</span>
-                    <span className="font-bold text-red-800">{gw.breachedComplaints}</span>
+                  <div>
+                    <span className="text-neutral-400 block text-[9px] uppercase">&gt;7d</span>
+                    <span className="font-semibold text-red-700">{gw.breachedComplaints}</span>
                   </div>
-                  <div className="bg-neutral-50 border border-neutral-200 p-1.5 rounded">
-                    <span className="text-neutral-500 block text-[9px] uppercase">Avg Time</span>
-                    <span className="font-bold text-neutral-700">
-                      {gw.avgResolutionHours ? `${gw.avgResolutionHours}h` : '-'}
+                  <div>
+                    <span className="text-neutral-400 block text-[9px] uppercase">Avg Time</span>
+                    <span className="text-neutral-700">
+                      {gw.avgResolutionHours ? `${gw.avgResolutionHours}h` : '—'}
                     </span>
                   </div>
-                  <div className="bg-neutral-50 border border-neutral-200 p-1.5 rounded">
-                    <span className="text-neutral-500 block text-[9px] uppercase">Rate</span>
-                    <span className="font-bold text-neutral-800">
+                  <div>
+                    <span className="text-neutral-400 block text-[9px] uppercase">Rate</span>
+                    <span className="font-semibold text-neutral-900">
                       {gw.resolutionRate !== null && gw.resolutionRate !== undefined
                         ? `${gw.resolutionRate}%`
-                        : '-'}
+                        : '—'}
                     </span>
                   </div>
                 </div>
@@ -341,8 +321,7 @@ export function DashboardScorecard({
         </div>
 
         {/* Scorecard Footnote per exact user specification */}
-        <div className="px-4 sm:px-5 py-2.5 bg-neutral-50 border-t border-neutral-200 flex items-start gap-2 text-[11px] text-neutral-600">
-          <Info className="w-3.5 h-3.5 text-neutral-400 shrink-0 mt-0.5" />
+        <div className="px-4 sm:px-6 py-3 bg-[#FAF9F5] border-t border-neutral-200 text-[11px] text-neutral-500">
           <p>
             FYR, &ldquo;No Recent Update&rdquo; means GatewayPulse has not received further information and does not indicate that the issue remains unresolved.
           </p>

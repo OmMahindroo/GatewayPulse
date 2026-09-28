@@ -1,16 +1,6 @@
 'use client';
 
 import React from 'react';
-import {
-  Building2,
-  Layers,
-  MessageSquare,
-  ThumbsUp,
-  FileText,
-  ShieldCheck,
-  BellRing,
-  Clock,
-} from 'lucide-react';
 import { SlaBadge } from './SlaBadge';
 
 interface IssueCardProps {
@@ -21,35 +11,25 @@ interface IssueCardProps {
 
 export function IssueCard({ issue, onClick, onUpvote }: IssueCardProps) {
   return (
-    <div
+    <article
       onClick={onClick}
-      className="p-3.5 sm:p-4 border border-neutral-200 rounded-md bg-white hover:border-neutral-400 hover:shadow-sm cursor-pointer transition-all space-y-2.5"
+      className="p-4 sm:p-5 bg-white hover:bg-[#FAF9F5] cursor-pointer transition-colors space-y-3"
     >
-      {/* Top Row: Gateway, Category, Official PG Response, SLA Badge */}
+      {/* Top Row: Case ID, Provider, Category, Official PG Response, SLA Status */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-1.5 text-xs">
-          <span className="inline-flex items-center gap-1 font-semibold text-neutral-900 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded-md">
-            <Building2 className="w-3 h-3 text-neutral-500 shrink-0" />
+        <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 text-xs">
+          <span className="font-mono text-[11px] text-neutral-400">
+            #{issue.id.slice(-6).toUpperCase()}
+          </span>
+          <span className="font-semibold text-neutral-950 tracking-tight">
             {issue.customPgName || issue.gateway.name}
           </span>
-          <span className="inline-flex items-center gap-1 text-neutral-600 bg-neutral-50 border border-neutral-200 px-2 py-0.5 rounded-md">
-            <Layers className="w-3 h-3 text-neutral-400 shrink-0" />
-            <span className="truncate max-w-[160px] sm:max-w-none">{issue.category.name}</span>
-          </span>
-          {issue.issueDuration && (
-            <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-mono text-neutral-600 bg-neutral-100 border border-neutral-200 px-1.5 py-0.5 rounded-md">
-              <Clock className="w-3 h-3 text-neutral-400 shrink-0" />
-              {issue.issueDuration}
-            </span>
-          )}
-          {issue.channelTried && (
-            <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono text-neutral-500 bg-neutral-50 border border-neutral-200 px-1.5 py-0.5 rounded-md">
-              Channel: {issue.channelTried}
-            </span>
-          )}
+          <span className="text-neutral-300">/</span>
+          <span className="text-neutral-600">{issue.category.name}</span>
+
           {issue.hasOfficialReply && (
-            <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-medium text-sky-800 bg-sky-50 border border-sky-200 px-1.5 py-0.5 rounded-md">
-              <ShieldCheck className="w-3 h-3 text-sky-600 shrink-0" />
+            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 bg-neutral-900 text-white ml-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               Official PG Response
             </span>
           )}
@@ -58,56 +38,70 @@ export function IssueCard({ issue, onClick, onUpvote }: IssueCardProps) {
         {issue.sla && <SlaBadge sla={issue.sla} />}
       </div>
 
-      {/* Middle: Title & preview */}
+      {/* Middle: Issue Title & Readable Sans-Serif Description */}
       <div>
-        <h3 className="text-xs sm:text-sm font-semibold text-neutral-900 leading-snug line-clamp-2 sm:line-clamp-1">
+        <h3 className="text-sm sm:text-[15px] font-semibold text-neutral-950 leading-snug">
           {issue.title}
         </h3>
-        <p className="text-[11px] sm:text-xs text-neutral-600 line-clamp-2 mt-1 leading-relaxed font-mono">
+        <p className="text-xs sm:text-[13px] text-neutral-600 line-clamp-2 mt-1 leading-relaxed">
           {issue.description}
         </p>
       </div>
 
-      {/* Bottom row: Reporter, Attachments, Nudge, Comments, I have the same issue */}
-      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs text-neutral-500 pt-2 border-t border-neutral-100">
-        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-          <span className="truncate max-w-[140px] sm:max-w-none font-medium text-neutral-700">
+      {/* Bottom Row: Structured Case Facts & Action */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-neutral-100 text-[11px] text-neutral-500">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono">
+          <span className="text-neutral-700">
             {issue.merchant?.companyName || issue.merchant?.name || 'Verified Merchant'}
           </span>
-          <span>•</span>
+          <span className="text-neutral-300">·</span>
           <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
 
+          {issue.issueDuration && (
+            <>
+              <span className="text-neutral-300">·</span>
+              <span>Duration: {issue.issueDuration}</span>
+            </>
+          )}
+
+          {issue.channelTried && (
+            <>
+              <span className="text-neutral-300 hidden sm:inline">·</span>
+              <span className="hidden sm:inline">Channel: {issue.channelTried}</span>
+            </>
+          )}
+
           {issue.attachments && issue.attachments.length > 0 && (
-            <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] text-neutral-500">
-              <FileText className="w-3 h-3 shrink-0" />
-              {issue.attachments.length} proof
-            </span>
+            <>
+              <span className="text-neutral-300">·</span>
+              <span className="text-neutral-700 underline decoration-neutral-300">
+                {issue.attachments.length} proof file{issue.attachments.length > 1 ? 's' : ''}
+              </span>
+            </>
           )}
 
           {issue.nudgeCount > 0 && (
-            <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200 font-mono">
-              <BellRing className="w-2.5 h-2.5 text-amber-600 shrink-0" />
-              Nudged {issue.nudgeCount}x
-            </span>
+            <>
+              <span className="text-neutral-300">·</span>
+              <span className="text-amber-800">Nudged {issue.nudgeCount}x</span>
+            </>
           )}
         </div>
 
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          <span className="inline-flex items-center gap-1 text-[11px] text-neutral-500">
-            <MessageSquare className="w-3 h-3 text-neutral-400 shrink-0" />
-            {issue._count?.comments || 0}
+        <div className="flex items-center gap-3 shrink-0 font-mono text-[11px]">
+          <span className="text-neutral-500">
+            {issue._count?.comments || 0} {issue._count?.comments === 1 ? 'reply' : 'replies'}
           </span>
 
           <button
             type="button"
             onClick={onUpvote}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-neutral-200 bg-neutral-50 text-[11px] font-medium text-neutral-700 hover:bg-neutral-100 transition-colors"
+            className="px-2.5 py-1 border border-neutral-300 bg-white text-neutral-800 hover:border-neutral-900 hover:text-neutral-950 transition-colors"
           >
-            <ThumbsUp className="w-3 h-3 text-neutral-500 shrink-0" />
-            <span>I have the same issue ({issue.upvotesCount})</span>
+            I have the same issue ({issue.upvotesCount})
           </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
