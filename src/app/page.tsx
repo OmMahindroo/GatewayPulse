@@ -271,7 +271,7 @@ export default function HomePage() {
                   onChange={(e) => setSelectedGateway(e.target.value || null)}
                   className="w-full px-3 py-2 border border-neutral-300 bg-white text-neutral-900 focus:outline-none focus:border-neutral-900"
                 >
-                  <option value="">All Payment Providers ({gateways.length})</option>
+                  <option value="">All Payment Providers</option>
                   {gateways.map((gw) => (
                     <option key={gw.id} value={gw.slug}>
                       {gw.name}

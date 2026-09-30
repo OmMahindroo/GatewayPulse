@@ -136,7 +136,7 @@ export function DashboardScorecard({
               >
                 {showAllProviders
                   ? 'Show Top 8 Providers'
-                  : `Index All ${standardGateways.length} Providers`}
+                  : 'All Providers'}
               </button>
             )}
           </div>
