@@ -169,13 +169,15 @@ export async function GET() {
 export async function PATCH(request: Request) {
   try {
     const body = await request.json();
-    const { gatewayId, isClaimed, escalationMatrix, description, website } = body;
+    const { gatewayId, name, domain, isClaimed, escalationMatrix, description, website } = body;
 
     if (!gatewayId) {
       return NextResponse.json({ error: 'gatewayId is required.' }, { status: 400 });
     }
 
     const updateData: any = {};
+    if (typeof name === 'string' && name.trim()) updateData.name = name.trim();
+    if (typeof domain === 'string' && domain.trim()) updateData.domain = domain.trim().toLowerCase();
     if (typeof isClaimed === 'boolean') updateData.isClaimed = isClaimed;
     if (typeof escalationMatrix === 'string') updateData.escalationMatrix = escalationMatrix;
     if (typeof description === 'string') updateData.description = description;
@@ -190,6 +192,41 @@ export async function PATCH(request: Request) {
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message || 'Failed to update payment gateway profile.' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { name, domain, website, description, escalationMatrix, isClaimed } = body;
+
+    if (!name || !domain) {
+      return NextResponse.json({ error: 'Provider Name and Official Domain are required.' }, { status: 400 });
+    }
+
+    const slug = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    const created = await prisma.paymentGateway.create({
+      data: {
+        name: name.trim(),
+        slug,
+        domain: domain.trim().toLowerCase().replace(/^@/, ''),
+        website: website?.trim() || `https://${domain.trim().toLowerCase().replace(/^@/, '')}`,
+        description: description?.trim() || `Merchant support & incident registry for ${name.trim()}.`,
+        escalationMatrix: escalationMatrix?.trim() || null,
+        isClaimed: Boolean(isClaimed),
+      },
+    });
+
+    return NextResponse.json({ success: true, gateway: created });
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: err.message || 'Failed to create payment gateway.' },
       { status: 500 }
     );
   }

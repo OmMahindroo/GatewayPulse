@@ -506,6 +506,7 @@ export default function HomePage() {
         }}
         onSelectIssue={(issueId) => setSelectedIssueId(issueId)}
         onGatewayUpdated={() => fetchGateways()}
+        onRequireAuth={() => setIsAuthOpen(true)}
       />
 
       <AdminDashboardModal
